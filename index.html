@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Greyfikal Apriyuda — Software Engineer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: ['selector', '[data-theme="dark"]'],
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Syne', 'sans-serif'],
+                        body: ['DM Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        accent: { DEFAULT: '#FF6B35', 500: '#FF6B35', 400: '#FF8C5A', 300: '#FFB08C' },
+                        cyan: { accent: '#00D4FF', DEFAULT: '#00D4FF' },
+                    },
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --bg: #0A0A0F;
+            --bg2: #111118;
+            --bg3: #1A1A24;
+            --border: #2A2A3A;
+            --text: #F0F0F5;
+            --muted: #8888A0;
+            --accent: #FF6B35;
+            --accent2: #00D4FF;
+            --card: #141420;
+        }
+
+        [data-theme="light"] {
+            --bg: #F5F4F0;
+            --bg2: #EDECE8;
+            --bg3: #E0DFD8;
+            --border: #C8C7BE;
+            --text: #1A1A24;
+            --muted: #6B6B7A;
+            --accent: #E84D10;
+            --accent2: #0095B8;
+            --card: #FAFAF7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'DM Sans', sans-serif;
+            overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        /* Noise texture overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        .font-display {
+            font-family: 'Syne', sans-serif;
+        }
+
+        /* Navbar */
+        #navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            backdrop-filter: blur(16px);
+            background: rgba(10, 10, 15, 0.7);
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        [data-theme="light"] #navbar {
+            background: rgba(245, 244, 240, 0.8);
+        }
+
+        #navbar.scrolled {
+            border-bottom-color: var(--border);
+        }
+
+        .nav-logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.1rem;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            letter-spacing: 0.02em;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transition: transform 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--text);
+        }
+
+        .nav-links a:hover::after {
+            transform: scaleX(1);
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .btn-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 0.875rem;
+            font-weight: 600;
+            font-family: 'Syne', sans-serif;
+        }
+
+        .btn-icon:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Hero */
+        #hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-glow {
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(120px);
+            pointer-events: none;
+        }
+
+        .hero-glow-1 {
+            background: rgba(255, 107, 53, 0.15);
+            top: -100px;
+            right: -100px;
+            animation: floatGlow1 8s ease-in-out infinite;
+        }
+
+        .hero-glow-2 {
+            background: rgba(0, 212, 255, 0.08);
+            bottom: -200px;
+            left: -100px;
+            animation: floatGlow2 10s ease-in-out infinite;
+        }
+
+        @keyframes floatGlow1 {
+
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
+
+            50% {
+                transform: translate(-30px, 30px)
+            }
+        }
+
+        @keyframes floatGlow2 {
+
+            0%,
+            100% {
+                transform: translate(0, 0)
+            }
+
+            50% {
+                transform: translate(30px, -20px)
+            }
+        }
+
+        .hero-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            padding: 0.375rem 1rem;
+            margin-bottom: 2rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background: var(--bg3);
+        }
+
+        .hero-tag .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #22C55E;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: 0.5;
+                transform: scale(1.3)
+            }
+        }
+
+        .hero-name {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(3rem, 8vw, 6.5rem);
+            font-weight: 800;
+            line-height: 0.95;
+            letter-spacing: -0.02em;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-name .accent {
+            color: var(--accent);
+        }
+
+        .hero-name .accent2 {
+            color: var(--accent2);
+        }
+
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            font-weight: 500;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+        }
+
+        #typed-text {
+            color: var(--accent);
+        }
+
+        .cursor {
+            animation: blink 0.7s infinite;
+            color: var(--accent);
+        }
+
+        @keyframes blink {
+
+            0%,
+            100% {
+                opacity: 1
+            }
+
+            50% {
+                opacity: 0
+            }
+        }
+
+        .hero-desc {
+            max-width: 600px;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--muted);
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            margin-bottom: 3rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--accent);
+            color: #fff;
+            padding: 0.75rem 1.75rem;
+            border-radius: 100px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.25s;
+            border: 2px solid var(--accent);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.35);
+        }
+
+        .btn-outline {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: transparent;
+            color: var(--text);
+            padding: 0.75rem 1.75rem;
+            border-radius: 100px;
+            font-family: 'Syne', sans-serif;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.25s;
+            border: 2px solid var(--border);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .hero-socials {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.2s;
+        }
+
+        .social-link svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .social-link:hover {
+            color: var(--accent);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            margin-top: 4rem;
+            flex-wrap: wrap;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-num {
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 4px;
+        }
+
+        /* Section styles */
+        section {
+            padding: 5rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-eyebrow {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--accent);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .section-eyebrow::before {
+            content: '';
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(1.75rem, 4vw, 2.75rem);
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            color: var(--muted);
+            font-size: 1rem;
+            line-height: 1.6;
+            max-width: 560px;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        /* About */
+        #about {
+            background: var(--bg2);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .about-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Syne', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-avatar::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.1));
+        }
+
+        .about-info p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .about-meta {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .meta-item {}
+
+        .meta-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+
+        .meta-value {
+            font-size: 0.9rem;
+            color: var(--text);
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .about-text p {
+            color: var(--muted);
+            line-height: 1.8;
+            font-size: 1rem;
+        }
+
+        .about-text p+p {
+            margin-top: 1rem;
+        }
+
+        .about-highlight {
+            color: var(--text);
+            font-weight: 500;
+        }
+
+        /* Skills */
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .skill-category {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .skill-category:hover {
+            border-color: var(--accent);
+            transform: translateY(-3px);
+        }
+
+        .skill-cat-title {
+            font-family: 'Syne', sans-serif;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .skill-cat-icon {
+            font-size: 1rem;
+        }
+
+        .skill-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .skill-tag {
+            padding: 0.35rem 0.8rem;
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid var(--border);
+            background: var(--bg3);
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .skill-tag:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(255, 107, 53, 0.08);
+        }
+
+        .skill-tag.highlight {
+            border-color: var(--accent);
+            color: var(--accent);
+            background: rgba(255, 107, 53, 0.1);
+        }
+
+        /* Timeline */
+        #experience {
+            background: var(--bg2);
+        }
+
+        .timeline {
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+        }
+
+        .timeline-item {
+            padding-left: 3rem;
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 0;
+            top: 4px;
+            width: 26px;
+            height: 26px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 2px solid var(--accent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .timeline-dot-inner {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--accent);
+        }
+
+        .timeline-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.2s;
+        }
+
+        .timeline-card:hover {
+            border-color: var(--accent);
+        }
+
+        .timeline-period {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.35rem;
+        }
+
+        .timeline-role {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .timeline-company {
+            font-size: 0.875rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+
+        .timeline-bullets {
+            list-style: none;
+        }
+
+        .timeline-bullets li {
+            font-size: 0.875rem;
+            color: var(--muted);
+            line-height: 1.6;
+            padding-left: 1rem;
+            position: relative;
+            margin-bottom: 0.4rem;
+        }
+
+        .timeline-bullets li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-size: 0.75rem;
+        }
+
+        /* Projects */
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .project-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 1.75rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .project-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .project-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .project-company {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .project-name {
+            font-family: 'Syne', sans-serif;
+            font-size: 1.05rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            line-height: 1.3;
+        }
+
+        .project-desc {
+            font-size: 0.875rem;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 1.25rem;
+        }
+
+        .project-tech {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .tech-badge {
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            background: var(--bg3);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            color: var(--accent2);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: gap 0.2s;
+        }
+
+        .project-link:hover {
+            gap: 0.7rem;
+        }
+
+        .project-link svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Contact */
+        #contact {
+            background: var(--bg2);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: start;
+        }
+
+        .contact-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem 1.25rem;
+            text-decoration: none;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .contact-item:hover {
+            border-color: var(--accent);
+            transform: translateX(4px);
+        }
+
+        .contact-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--bg3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+        }
+
+        .contact-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--muted);
+        }
+
+        .contact-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-top: 2px;
+        }
+
+        .availability-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+        }
+
+        .avail-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 100px;
+            padding: 0.4rem 1rem;
+            font-size: 0.8rem;
+            color: #22C55E;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--bg);
+            border-top: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+
+        /* Scroll reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(24px);
+            transition: opacity 0.6s, transform 0.6s;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .about-grid,
+            .contact-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            section {
+                padding: 4rem 1.25rem;
+            }
+
+            #navbar {
+                padding: 1rem 1.25rem;
+            }
+        }
+
+        /* Education section */
+        .edu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .edu-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            transition: border-color 0.2s, transform 0.2s;
+        }
+
+        .edu-card:hover {
+            border-color: var(--accent2);
+            transform: translateY(-3px);
+        }
+
+        .edu-degree {
+            font-family: 'Syne', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .edu-school {
+            color: var(--accent2);
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .edu-period {
+            font-size: 0.75rem;
+            color: var(--muted);
+            margin-bottom: 0.75rem;
+        }
+
+        .edu-note {
+            font-size: 0.825rem;
+            color: var(--muted);
+            line-height: 1.6;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- NAVBAR -->
+    <nav id="navbar">
+        <a href="#hero" class="nav-logo">gry<span>.</span>dev</a>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#about" data-en="About" data-id="Tentang">About</a></li>
+            <li><a href="#skills" data-en="Skills" data-id="Keahlian">Skills</a></li>
+            <li><a href="#experience" data-en="Experience" data-id="Pengalaman">Experience</a></li>
+            <li><a href="#projects" data-en="Projects" data-id="Proyek">Projects</a></li>
+            <li><a href="#contact" data-en="Contact" data-id="Kontak">Contact</a></li>
+        </ul>
+        <div class="nav-controls">
+            <button class="btn-icon" id="lang-btn" title="Switch Language">EN</button>
+            <button class="btn-icon" id="theme-btn" title="Toggle Theme">☀️</button>
+        </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="hero">
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="hero-content">
+            <div class="hero-tag">
+                <span class="dot"></span>
+                <span data-en="Available for work" data-id="Tersedia untuk bekerja">Available for work</span>
+            </div>
+            <h1 class="hero-name">
+                <span>GREYFIKAL</span><br>
+                <span class="accent">APRIYUDA</span>
+            </h1>
+            <p class="hero-title">
+                <span id="typed-text"></span><span class="cursor">|</span>
+            </p>
+            <p class="hero-desc"
+                data-en="Results-driven Software Engineer with 7+ years building performance-critical applications. Strong background in full-stack development, system architecture, and cybersecurity."
+                data-id="Software Engineer berpengalaman 7+ tahun membangun aplikasi kritis di lingkungan produksi. Latar belakang kuat di full-stack development, arsitektur sistem, dan keamanan siber.">
+                Results-driven Software Engineer with 7+ years building performance-critical applications. Strong
+                background in full-stack development, system architecture, and cybersecurity.
+            </p>
+            <div class="hero-cta">
+                <a href="#projects" class="btn-primary" data-en="View Projects" data-id="Lihat Proyek">View Projects
+                    →</a>
+                <a href="#contact" class="btn-outline" data-en="Get In Touch" data-id="Hubungi Saya">Get In Touch</a>
+            </div>
+            <div class="hero-socials">
+                <a href="https://github.com/gryfklapryd" class="social-link" target="_blank" rel="noopener">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
+                    </svg>
+                    GitHub
+                </a>
+                <a href="https://linkedin.com/in/gryfklapryd" class="social-link" target="_blank" rel="noopener">
+                    <svg fill="currentColor" viewBox="0 0 24 24">
+                        <path
+                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                    </svg>
+                    LinkedIn
+                </a>
+                <a href="https://greyfikal.web.id" class="social-link" target="_blank" rel="noopener">
+                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <circle cx="12" cy="12" r="10" />
+                        <path
+                            d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+                    </svg>
+                    Website
+                </a>
+            </div>
+            <div class="hero-stats">
+                <div>
+                    <div class="stat-num">7+</div>
+                    <div class="stat-label" data-en="Years Dev Exp." data-id="Tahun Pengalaman Dev">Years Dev Exp.</div>
+                </div>
+                <div>
+                    <div class="stat-num">8+</div>
+                    <div class="stat-label" data-en="Years SysAdmin" data-id="Tahun SysAdmin">Years SysAdmin</div>
+                </div>
+                <div>
+                    <div class="stat-num">8</div>
+                    <div class="stat-label" data-en="Projects Shipped" data-id="Proyek Diluncurkan">Projects Shipped
+                    </div>
+                </div>
+                <div>
+                    <div class="stat-num">3</div>
+                    <div class="stat-label" data-en="Gov. Institutions" data-id="Instansi Pemerintah">Gov. Institutions
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section id="about">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-eyebrow" data-en="Who I Am" data-id="Siapa Saya">Who I Am</div>
+                <h2 class="section-title" data-en="About Me" data-id="Tentang Saya">About Me</h2>
+            </div>
+            <div class="about-grid">
+                <div class="reveal">
+                    <div class="about-card">
+                        <div class="about-avatar">GA</div>
+                        <div class="about-meta">
+                            <div class="meta-item">
+                                <div class="meta-label" data-en="Location" data-id="Lokasi">Location</div>
+                                <div class="meta-value">Jakarta, Indonesia</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label" data-en="Timezone" data-id="Zona Waktu">Timezone</div>
+                                <div class="meta-value">GMT+7 (WIB)</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label">Email</div>
+                                <div class="meta-value" style="font-size:0.8rem">greyfikal9@gmail.com</div>
+                            </div>
+                            <div class="meta-item">
+                                <div class="meta-label" data-en="Status" data-id="Status">Status</div>
+                                <div class="meta-value" style="color:#22C55E" data-en="Open to Work"
+                                    data-id="Siap Bekerja">Open to Work</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-text reveal" style="transition-delay:0.15s">
+                    <p data-en='Results-driven Software Engineer with over <span class="about-highlight">7 years of experience</span> developing performance-critical applications in production environments, alongside <span class="about-highlight">8+ years as a system administrator</span>.'
+                        data-id='Software Engineer berpengalaman dengan <span class="about-highlight">7+ tahun pengalaman</span> membangun aplikasi kritis di lingkungan produksi, serta <span class="about-highlight">8+ tahun sebagai system administrator</span>.'>
+                        Results-driven Software Engineer with over <span class="about-highlight">7 years of
+                            experience</span> developing performance-critical applications in production environments,
+                        alongside <span class="about-highlight">8+ years as a system administrator</span>.
+                    </p>
+                    <p data-en='Demonstrated expertise in <span class="about-highlight">leading company-wide projects</span>, setting technical vision, and making architectural decisions. Passionate about software development with a strong commitment to continuous learning.'
+                        data-id='Terbukti mampu <span class="about-highlight">memimpin proyek lintas unit</span>, menetapkan visi teknis, dan mengambil keputusan arsitektural. Bersemangat terhadap pengembangan perangkat lunak dan berkomitmen pada pembelajaran berkelanjutan.'>
+                        Demonstrated expertise in <span class="about-highlight">leading company-wide projects</span>,
+                        setting technical vision, and making architectural decisions. Passionate about software
+                        development with a strong commitment to continuous learning.
+                    </p>
+                    <p data-en='Strong background in RDBMS including <span class="about-highlight">MySQL and SQL Server</span>, NoSQL databases like Redis, and cybersecurity collaboration with BSSN through ITSA assessments.'
+                        data-id='Latar belakang kuat dalam RDBMS termasuk <span class="about-highlight">MySQL dan SQL Server</span>, NoSQL seperti Redis, dan kolaborasi keamanan siber dengan BSSN melalui kegiatan ITSA.'>
+                        Strong background in RDBMS including <span class="about-highlight">MySQL and SQL Server</span>,
+                        NoSQL databases like Redis, and cybersecurity collaboration with BSSN through ITSA assessments.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section id="skills">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-eyebrow" data-en="What I Work With" data-id="Yang Saya Gunakan">What I Work With
+                </div>
+                <h2 class="section-title" data-en="Skills & Technologies" data-id="Keahlian & Teknologi">Skills &
+                    Technologies</h2>
+                <p class="section-subtitle"
+                    data-en="A toolkit built from years of hands-on production experience across government institutions."
+                    data-id="Toolkit yang dibangun dari pengalaman produksi bertahun-tahun di berbagai instansi pemerintah.">
+                    A toolkit built from years of hands-on production experience across government institutions.</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-category reveal">
+                    <div class="skill-cat-title"><span class="skill-cat-icon">💻</span><span data-en="Languages"
+                            data-id="Bahasa Pemrograman">Languages</span></div>
+                    <div class="skill-tags">
+                        <span class="skill-tag highlight">PHP</span>
+                        <span class="skill-tag highlight">Python</span>
+                        <span class="skill-tag highlight">JavaScript</span>
+                        <span class="skill-tag">HTML</span>
+                        <span class="skill-tag">CSS</span>
+                        <span class="skill-tag">SQL</span>
+                    </div>
+                </div>
+                <div class="skill-category reveal" style="transition-delay:0.1s">
+                    <div class="skill-cat-title"><span class="skill-cat-icon">🚀</span><span data-en="Frameworks"
+                            data-id="Framework">Frameworks</span></div>
+                    <div class="skill-tags">
+                        <span class="skill-tag highlight">Laravel</span>
+                        <span class="skill-tag highlight">CodeIgniter</span>
+                        <span class="skill-tag highlight">Flask</span>
+                        <span class="skill-tag">Bootstrap</span>
+                        <span class="skill-tag">Tailwind CSS</span>
+                        <span class="skill-tag">jQuery</span>
+                    </div>
+                </div>
+                <div class="skill-category reveal" style="transition-delay:0.2s">
+                    <div class="skill-cat-title"><span class="skill-cat-icon">🗄️</span><span data-en="Databases"
+                            data-id="Basis Data">Databases</span></div>
+                    <div class="skill-tags">
+                        <span class="skill-tag highlight">MySQL</span>
+                        <span class="skill-tag highlight">SQL Server</span>
+                        <span class="skill-tag">Oracle</span>
+                        <span class="skill-tag">Redis</span>
+                        <span class="skill-tag">MariaDB</span>
+                    </div>
+                </div>
+                <div class="skill-category reveal" style="transition-delay:0.3s">
+                    <div class="skill-cat-title"><span class="skill-cat-icon">🛡️</span><span data-en="Security & Infra"
+                            data-id="Keamanan & Infrastruktur">Security & Infra</span></div>
+                    <div class="skill-tags">
+                        <span class="skill-tag highlight">Nginx</span>
+                        <span class="skill-tag highlight">Linux</span>
+                        <span class="skill-tag">Fortigate</span>
+                        <span class="skill-tag">Barracuda WAF</span>
+                        <span class="skill-tag">BSSN ITSA</span>
+                        <span class="skill-tag">Windows Server</span>
+                    </div>
+                </div>
+                <div class="skill-category reveal" style="transition-delay:0.4s">
+                    <div class="skill-cat-title"><span class="skill-cat-icon">🛠️</span><span
+                            data-en="Tools & Practices" data-id="Alat & Praktik">Tools & Practices</span></div>
+                    <div class="skill-tags">
+                        <span class="skill-tag highlight">Git</span>
+                        <span class="skill-tag">SOLID</span>
+                        <span class="skill-tag">DRY</span>
+                        <span class="skill-tag">System Design</span>
+                        <span class="skill-tag">Data Processing</span>
+                    </div>
+                </div>
+                <div class="skill-category reveal" style="transition-delay:0.5s">
+                    <div class="skill-cat-title"><span class="skill-cat-icon">🌐</span><span data-en="OS Environments"
+                            data-id="Lingkungan OS">OS Environments</span></div>
+                    <div class="skill-tags">
+                        <span class="skill-tag">Ubuntu</span>
+                        <span class="skill-tag">Debian</span>
+                        <span class="skill-tag">CentOS</span>
+                        <span class="skill-tag">Arch Linux</span>
+                        <span class="skill-tag">Windows Server</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EXPERIENCE -->
+    <section id="experience">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-eyebrow" data-en="My Journey" data-id="Perjalanan Saya">My Journey</div>
+                <h2 class="section-title" data-en="Work Experience" data-id="Pengalaman Kerja">Work Experience</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item reveal">
+                    <div class="timeline-dot">
+                        <div class="timeline-dot-inner"></div>
+                    </div>
+                    <div class="timeline-card">
+                        <div class="timeline-period">June 2025 — Present</div>
+                        <div class="timeline-role" data-en="Pengadministrasi Perkantoran"
+                            data-id="Pengadministrasi Perkantoran">Pengadministrasi Perkantoran</div>
+                        <div class="timeline-company">Bagian Organisasi & Tata Laksana — Ditjen Perhubungan Udara,
+                            Kemenhub</div>
+                        <ul class="timeline-bullets">
+                            <li data-en="Developed an FAQ system to help leadership map frequently asked questions across units."
+                                data-id="Mengembangkan sistem FAQ untuk membantu pimpinan memetakan pertanyaan yang sering diajukan.">
+                                Developed an FAQ system to help leadership map frequently asked questions across units.
+                            </li>
+                            <li data-en="Built a microsite system for every airport authority under Directorate General Civil Aviation."
+                                data-id="Membangun sistem microsite untuk setiap otoritas bandara di bawah Ditjen Perhubungan Udara.">
+                                Built a microsite system for every airport authority under Directorate General Civil
+                                Aviation.</li>
+                            <li data-en="Developed a publication system website for Balai Teknik Penerbangan."
+                                data-id="Mengembangkan website sistem publikasi untuk Balai Teknik Penerbangan.">
+                                Developed a publication system website for Balai Teknik Penerbangan.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item reveal" style="transition-delay:0.1s">
+                    <div class="timeline-dot">
+                        <div class="timeline-dot-inner"></div>
+                    </div>
+                    <div class="timeline-card">
+                        <div class="timeline-period">December 2024 — May 2025</div>
+                        <div class="timeline-role">Pengadministrasi Perkantoran</div>
+                        <div class="timeline-company">Bagian Perencanaan — Ditjen Perhubungan Udara, Kemenhub</div>
+                        <ul class="timeline-bullets">
+                            <li data-en="Developed a microsite system for every airport under DGCA to streamline documentation and publication activities."
+                                data-id="Mengembangkan sistem microsite untuk setiap bandara di bawah DGCA guna memudahkan dokumentasi dan publikasi.">
+                                Developed a microsite system for every airport under DGCA to streamline documentation
+                                and publication activities.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="timeline-item reveal" style="transition-delay:0.15s">
+                    <div class="timeline-dot">
+                        <div class="timeline-dot-inner"></div>
+                    </div>
+                    <div class="timeline-card">
+                        <div class="timeline-period">March 2022 — November 2024</div>
+                        <div class="timeline-role" data-en="Basic Aviation Security Officer"
+                            data-id="Petugas Basic Aviation Security">Basic Aviation Security Officer</div>
+                        <div class="timeline-company">UPBU Dewadaru — Ditjen Perhubungan Udara, Kemenhub</div>
+                    </div>
+                </div>
+                <div class="timeline-item reveal" style="transition-delay:0.2s">
+                    <div class="timeline-dot">
+                        <div class="timeline-dot-inner"></div>
+                    </div>
+                    <div class="timeline-card">
+                        <div class="timeline-period">September 2017 — March 2022</div>
+                        <div class="timeline-role" data-en="IT Staff" data-id="Staf IT">IT Staff</div>
+                        <div class="timeline-company">Sub Bagian Perencanaan — Dinas Pendidikan Kab. Gunungkidul, Pemkab
+                            Gunungkidul</div>
+                        <ul class="timeline-bullets">
+                            <li data-en="Installed and maintained office network infrastructure for stable and secure connectivity."
+                                data-id="Memasang dan memelihara infrastruktur jaringan kantor untuk konektivitas yang stabil dan aman.">
+                                Installed and maintained office network infrastructure for stable and secure
+                                connectivity.</li>
+                            <li data-en="Managed and maintained server computers including essential server software and services."
+                                data-id="Mengelola dan memelihara komputer server termasuk perangkat lunak server esensial.">
+                                Managed and maintained server computers including essential server software and
+                                services.</li>
+                            <li data-en="Developed integration systems for the Dapodik (Education Data Backbone) database from the Ministry of Education."
+                                data-id="Mengembangkan sistem integrasi untuk basis data Dapodik dari Kemdikbudristek untuk Kab. Gunungkidul.">
+                                Developed integration systems for the <strong>Dapodik</strong> database from the
+                                Ministry of Education.</li>
+                            <li data-en="Monitored network traffic at Layer 3 and Layer 7 using Fortigate Firewall and Barracuda WAF."
+                                data-id="Memantau lalu lintas jaringan di Layer 3 dan Layer 7 menggunakan Fortigate Firewall dan Barracuda WAF.">
+                                Monitored network traffic at Layer 3/7 using <strong>Fortigate Firewall</strong> and
+                                <strong>Barracuda WAF</strong>.</li>
+                            <li data-en="Executed cybersecurity hardening in collaboration with BSSN through ITSA activities including post-assessment remediations."
+                                data-id="Melaksanakan penguatan keamanan siber bersama BSSN melalui kegiatan ITSA termasuk remediasi pasca-asesmen.">
+                                Executed cybersecurity hardening with <strong>BSSN</strong> through ITSA activities
+                                including post-assessment remediations.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- EDUCATION -->
+    <section id="education">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-eyebrow" data-en="Academic Background" data-id="Latar Belakang Akademik">Academic
+                    Background</div>
+                <h2 class="section-title" data-en="Education" data-id="Pendidikan">Education</h2>
+            </div>
+            <div class="edu-grid">
+                <div class="edu-card reveal">
+                    <div class="edu-degree" data-en="Undergraduate — Informatics" data-id="S1 — Informatika">
+                        Undergraduate — Informatics</div>
+                    <div class="edu-school">Universitas Siber Asia</div>
+                    <div class="edu-period">October 2025 — Present</div>
+                    <div class="edu-note"
+                        data-en="Continuing undergraduate studies with ongoing focus on software development and computing systems."
+                        data-id="Melanjutkan studi S1 dengan fokus pada pengembangan perangkat lunak dan sistem komputasi.">
+                        Continuing undergraduate studies with ongoing focus on software development and computing
+                        systems.</div>
+                </div>
+                <div class="edu-card reveal" style="transition-delay:0.1s">
+                    <div class="edu-degree" data-en="Undergraduate — Informatics" data-id="S1 — Informatika">
+                        Undergraduate — Informatics</div>
+                    <div class="edu-school">Universitas Mercu Buana Yogyakarta</div>
+                    <div class="edu-period">August 2019 — March 2022</div>
+                    <div class="edu-note"
+                        data-en="Heavy focus on web development with modules covering both frontend and backend. Relevant coursework: OS Architecture, Linux/Unix Programming, Web Development, Relational Database Design, Java Programming, Data Engineering."
+                        data-id="Fokus penuh pada web development dengan modul frontend dan backend. Mata kuliah relevan: Arsitektur OS, Pemrograman Linux/Unix, Pengembangan Web, Desain Database Relasional, Pemrograman Java, Data Engineering.">
+                        Heavy focus on web development. Coursework: OS Architecture, Linux/Unix Programming, Web Dev,
+                        Database Design, Java, Data Engineering.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section id="projects" style="background:var(--bg2)">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-eyebrow" data-en="What I've Built" data-id="Yang Telah Saya Bangun">What I've Built
+                </div>
+                <h2 class="section-title" data-en="Projects" data-id="Proyek">Projects</h2>
+                <p class="section-subtitle"
+                    data-en="Production systems serving government institutions across Indonesia."
+                    data-id="Sistem produksi yang melayani instansi pemerintah di seluruh Indonesia.">Production systems
+                    serving government institutions across Indonesia.</p>
+            </div>
+            <div class="projects-grid">
+
+                <div class="project-card reveal">
+                    <div class="project-company">Kementerian Perhubungan</div>
+                    <div class="project-name">Frequently Asked Questions System</div>
+                    <div class="project-desc"
+                        data-en="Web-based FAQ system with CRUD management, keyword search, user authentication, and admin dashboard. Questions are separated by responsible party."
+                        data-id="Sistem FAQ berbasis web dengan manajemen CRUD, pencarian kata kunci, autentikasi pengguna, dan dasbor admin. Pertanyaan dipisahkan berdasarkan pihak penanggung jawab.">
+                        Web-based FAQ system with CRUD management, keyword search, user auth, and admin dashboard.</div>
+                    <div class="project-tech">
+                        <span class="tech-badge">Laravel</span><span class="tech-badge">Bootstrap</span><span
+                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
+                    </div>
+                    <a href="https://icap.kemenhub.go.id/faq/" class="project-link" target="_blank" rel="noopener">
+                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="project-card reveal" style="transition-delay:0.05s">
+                    <div class="project-company">Kementerian Perhubungan</div>
+                    <div class="project-name">Microsite OBU — Airport Authorities</div>
+                    <div class="project-desc"
+                        data-en="Microsite and publication system for every airport authority under Directorate General Civil Aviation."
+                        data-id="Sistem microsite dan publikasi untuk setiap otoritas bandara di bawah Ditjen Perhubungan Udara.">
+                        Microsite and publication system for every airport authority under Directorate General Civil
+                        Aviation.</div>
+                    <div class="project-tech">
+                        <span class="tech-badge">Laravel</span><span class="tech-badge">Tailwind CSS</span><span
+                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
+                    </div>
+                    <a href="https://hubud.kemenhub.go.id/obu/" class="project-link" target="_blank" rel="noopener">
+                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="project-card reveal" style="transition-delay:0.1s">
+                    <div class="project-company">Kementerian Perhubungan</div>
+                    <div class="project-name">Microsite UPBU — Airports</div>
+                    <div class="project-desc"
+                        data-en="Microsite and publication system for every airport under Directorate General Civil Aviation, Kemenhub."
+                        data-id="Sistem microsite dan publikasi untuk setiap bandara di bawah Ditjen Perhubungan Udara, Kemenhub.">
+                        Microsite and publication system for every airport under Directorate General Civil Aviation,
+                        Kemenhub.</div>
+                    <div class="project-tech">
+                        <span class="tech-badge">Laravel</span><span class="tech-badge">Bootstrap</span><span
+                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
+                    </div>
+                    <a href="https://hubud.kemenhub.go.id/upbu/" class="project-link" target="_blank" rel="noopener">
+                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="project-card reveal" style="transition-delay:0.15s">
+                    <div class="project-company">Kementerian Perhubungan</div>
+                    <div class="project-name">Balai Teknik Penerbangan Website</div>
+                    <div class="project-desc"
+                        data-en="Publication website for Balai Teknik Penerbangan with content management, admin panel, and public-facing pages."
+                        data-id="Website publikasi untuk Balai Teknik Penerbangan dengan manajemen konten, panel admin, dan halaman publik.">
+                        Publication website for Balai Teknik Penerbangan with CMS, admin panel, and public-facing pages.
+                    </div>
+                    <div class="project-tech">
+                        <span class="tech-badge">Laravel</span><span class="tech-badge">Tailwind CSS</span><span
+                            class="tech-badge">JavaScript</span><span class="tech-badge">MariaDB</span>
+                    </div>
+                    <a href="https://hubud.kemenhub.go.id/btp/" class="project-link" target="_blank" rel="noopener">
+                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="project-card reveal" style="transition-delay:0.2s">
+                    <div class="project-company">Dinas Pendidikan Kab. Gunungkidul</div>
+                    <div class="project-name">School Website Monitoring System</div>
+                    <div class="project-desc"
+                        data-en="Microsite and publication system for every school under Dinas Pendidikan Kab. Gunungkidul."
+                        data-id="Sistem microsite dan publikasi untuk setiap sekolah di bawah Dinas Pendidikan Kab. Gunungkidul.">
+                        Microsite and publication system for every school under Dinas Pendidikan Kab. Gunungkidul.</div>
+                    <div class="project-tech">
+                        <span class="tech-badge">CodeIgniter</span><span class="tech-badge">Bootstrap</span><span
+                            class="tech-badge">JavaScript</span><span class="tech-badge">SQL Server</span>
+                    </div>
+                    <a href="https://monitorweb.pendidikan.gunungkidulkab.go.id/" class="project-link" target="_blank"
+                        rel="noopener">
+                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="project-card reveal" style="transition-delay:0.25s">
+                    <div class="project-company">Dinas Pendidikan Kab. Gunungkidul</div>
+                    <div class="project-name">BOS Fund Tax Reporting System</div>
+                    <div class="project-desc"
+                        data-en="Bantuan Operasional Sekolah fund tax reporting system used by schools across the regency."
+                        data-id="Sistem pelaporan pajak dana Bantuan Operasional Sekolah yang digunakan sekolah-sekolah se-kabupaten.">
+                        Bantuan Operasional Sekolah fund tax reporting system used by schools across the regency.</div>
+                    <div class="project-tech">
+                        <span class="tech-badge">Laravel</span><span class="tech-badge">Bootstrap</span><span
+                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
+                    </div>
+                    <a href="https://laporpajak.pendidikan.gunungkidulkab.go.id/" class="project-link" target="_blank"
+                        rel="noopener">
+                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="project-card reveal" style="transition-delay:0.3s">
+                    <div class="project-company">Dinas Pendidikan Kab. Gunungkidul</div>
+                    <div class="project-name">Dinas Pendidikan Website</div>
+                    <div class="project-desc"
+                        data-en="Official website and publication system for the Gunungkidul District Education Office."
+                        data-id="Website resmi dan sistem publikasi untuk Dinas Pendidikan Kabupaten Gunungkidul.">
+                        Official website and publication system for the Gunungkidul District Education Office.</div>
+                    <div class="project-tech">
+                        <span class="tech-badge">Laravel</span><span class="tech-badge">Bootstrap</span><span
+                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
+                    </div>
+                    <a href="https://pendidikan.gunungkidulkab.go.id" class="project-link" target="_blank"
+                        rel="noopener">
+                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="project-card reveal" style="transition-delay:0.35s">
+                    <div class="project-company">Dinas Pendidikan Kab. Gunungkidul</div>
+                    <div class="project-name">ASPD Computer-based Test (CBT)</div>
+                    <div class="project-desc"
+                        data-en="Computer-based testing system built with Python Flask, deployable online and offline via VirtualBox disk image."
+                        data-id="Sistem ujian berbasis komputer yang dibangun dengan Python Flask, dapat digunakan online maupun offline melalui VirtualBox.">
+                        Computer-based testing (CBT) system built with Python Flask, deployable online and offline via
+                        VirtualBox VM.</div>
+                    <div class="project-tech">
+                        <span class="tech-badge">Flask</span><span class="tech-badge">Python</span><span
+                            class="tech-badge">Bootstrap</span><span class="tech-badge">MySQL</span>
+                    </div>
+                    <a href="http://cbt.pendidikan.gunungkidulkab.go.id" class="project-link" target="_blank"
+                        rel="noopener">
+                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
+                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                            <path d="M7 17L17 7M7 7h10v10" />
+                        </svg>
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section id="contact">
+        <div class="section-inner">
+            <div class="section-header reveal">
+                <div class="section-eyebrow" data-en="Let's Connect" data-id="Ayo Terhubung">Let's Connect</div>
+                <h2 class="section-title" data-en="Get In Touch" data-id="Hubungi Saya">Get In Touch</h2>
+                <p class="section-subtitle"
+                    data-en="Have a project in mind or want to collaborate? I'm always open to discussing new opportunities."
+                    data-id="Punya proyek atau ingin berkolaborasi? Saya selalu terbuka untuk mendiskusikan peluang baru.">
+                    Have a project in mind or want to collaborate? I'm always open to discussing new opportunities.</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-links reveal">
+                    <a href="mailto:greyfikal9@gmail.com" class="contact-item">
+                        <div class="contact-icon">✉️</div>
+                        <div>
+                            <div class="contact-label">Email</div>
+                            <div class="contact-value">greyfikal9@gmail.com</div>
+                        </div>
+                    </a>
+                    <a href="https://linkedin.com/in/gryfklapryd" class="contact-item" target="_blank" rel="noopener">
+                        <div class="contact-icon">💼</div>
+                        <div>
+                            <div class="contact-label">LinkedIn</div>
+                            <div class="contact-value">linkedin.com/in/gryfklapryd</div>
+                        </div>
+                    </a>
+                    <a href="https://github.com/gryfklapryd" class="contact-item" target="_blank" rel="noopener">
+                        <div class="contact-icon">🐙</div>
+                        <div>
+                            <div class="contact-label">GitHub</div>
+                            <div class="contact-value">github.com/gryfklapryd</div>
+                        </div>
+                    </a>
+                    <a href="https://greyfikal.web.id" class="contact-item" target="_blank" rel="noopener">
+                        <div class="contact-icon">🌐</div>
+                        <div>
+                            <div class="contact-label">Website</div>
+                            <div class="contact-value">greyfikal.web.id</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="availability-card reveal" style="transition-delay:0.15s">
+                    <div class="avail-status">
+                        <span class="dot"></span>
+                        <span data-en="Available for opportunities" data-id="Tersedia untuk peluang">Available for
+                            opportunities</span>
+                    </div>
+                    <h3 class="section-title" style="font-size:1.5rem;margin-bottom:0.75rem"
+                        data-en="Let's build something great together."
+                        data-id="Mari bangun sesuatu yang luar biasa bersama.">Let's build something great together.
+                    </h3>
+                    <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem"
+                        data-en="Based in Jakarta (GMT+7), open to remote collaboration, part-time, or full-time roles. Experienced in delivering for government institutions."
+                        data-id="Berbasis di Jakarta (GMT+7), terbuka untuk kolaborasi remote, paruh waktu, atau penuh waktu. Berpengalaman dalam proyek instansi pemerintah.">
+                        Based in Jakarta (GMT+7), open to remote collaboration, part-time, or full-time roles.
+                        Experienced in delivering for government institutions.</p>
+                    <a href="mailto:greyfikal9@gmail.com" class="btn-primary" style="display:inline-flex"
+                        data-en="Say Hello 👋" data-id="Sapa Saya 👋">Say Hello 👋</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer>
+        <p>© 2025 Greyfikal Apriyuda · <span data-en="Built with passion in Jakarta"
+                data-id="Dibuat dengan passion di Jakarta">Built with passion in Jakarta</span> 🇮🇩</p>
+    </footer>
+
+    <script>
+        // =====================
+        // LANGUAGE SYSTEM
+        // =====================
+        let currentLang = 'en';
+
+        function setLang(lang) {
+            currentLang = lang;
+            document.documentElement.lang = lang;
+            document.getElementById('lang-btn').textContent = lang === 'en' ? 'ID' : 'EN';
+
+            document.querySelectorAll('[data-en][data-id]').forEach(el => {
+                const text = el.getAttribute('data-' + lang);
+                if (text) el.innerHTML = text;
+            });
+        }
+
+        document.getElementById('lang-btn').addEventListener('click', () => {
+            setLang(currentLang === 'en' ? 'id' : 'en');
+        });
+
+        // =====================
+        // THEME SYSTEM
+        // =====================
+        const themeBtn = document.getElementById('theme-btn');
+        let isDark = true;
+
+        themeBtn.addEventListener('click', () => {
+            isDark = !isDark;
+            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            themeBtn.textContent = isDark ? '☀️' : '🌙';
+        });
+
+        // =====================
+        // NAVBAR SCROLL
+        // =====================
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 60) nav.classList.add('scrolled');
+            else nav.classList.remove('scrolled');
+        });
+
+        // =====================
+        // TYPING ANIMATION
+        // =====================
+        const phrases = {
+            en: ['Software Engineer', 'Full-Stack Developer', 'System Administrator', 'Cybersecurity Enthusiast'],
+            id: ['Software Engineer', 'Full-Stack Developer', 'System Administrator', 'Penggemar Keamanan Siber']
+        };
+        let phraseIndex = 0, charIndex = 0, isDeleting = false;
+
+        function type() {
+            const list = phrases[currentLang];
+            const current = list[phraseIndex];
+            const el = document.getElementById('typed-text');
+
+            if (isDeleting) {
+                el.textContent = current.substring(0, charIndex--);
+            } else {
+                el.textContent = current.substring(0, charIndex++);
+            }
+
+            let delay = isDeleting ? 50 : 90;
+
+            if (!isDeleting && charIndex === current.length + 1) {
+                isDeleting = true; delay = 1800;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                phraseIndex = (phraseIndex + 1) % list.length;
+                delay = 400;
+            }
+
+            setTimeout(type, delay);
+        }
+        type();
+
+        // =====================
+        // SCROLL REVEAL
+        // =====================
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('visible'); }
+            });
+        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>
