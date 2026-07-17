@@ -1,1571 +1,832 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Greyfikal Apriyuda — Software Engineer</title>
+    <title>Greyfikal Apriyuda — Backend-focused Software Developer</title>
+    <meta name="description" content="Backend-focused Software Developer building multi-tenant government platforms on Laravel and Go microservices — Jakarta, Indonesia.">
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link
-        href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
-        rel="stylesheet" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: ['selector', '[data-theme="dark"]'],
-            theme: {
-                extend: {
-                    fontFamily: {
-                        display: ['Syne', 'sans-serif'],
-                        body: ['DM Sans', 'sans-serif'],
-                    },
-                    colors: {
-                        accent: { DEFAULT: '#FF6B35', 500: '#FF6B35', 400: '#FF8C5A', 300: '#FFB08C' },
-                        cyan: { accent: '#00D4FF', DEFAULT: '#00D4FF' },
-                    },
-                }
-            }
-        }
-    </script>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="tokens.css" />
     <style>
-        :root {
-            --bg: #0A0A0F;
-            --bg2: #111118;
-            --bg3: #1A1A24;
-            --border: #2A2A3A;
-            --text: #F0F0F5;
-            --muted: #8888A0;
-            --accent: #FF6B35;
-            --accent2: #00D4FF;
-            --card: #141420;
-        }
-
-        [data-theme="light"] {
-            --bg: #F5F4F0;
-            --bg2: #EDECE8;
-            --bg3: #E0DFD8;
-            --border: #C8C7BE;
-            --text: #1A1A24;
-            --muted: #6B6B7A;
-            --accent: #E84D10;
-            --accent2: #0095B8;
-            --card: #FAFAF7;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
-        body {
-            background: var(--bg);
-            color: var(--text);
-            font-family: 'DM Sans', sans-serif;
-            overflow-x: hidden;
-            transition: background 0.3s, color 0.3s;
-        }
-
-        /* Noise texture overlay */
-        body::before {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
-            pointer-events: none;
-            z-index: 0;
-            opacity: 0.4;
-        }
-
-        .font-display {
-            font-family: 'Syne', sans-serif;
-        }
-
-        /* Navbar */
-        #navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 100;
-            padding: 1rem 2rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            backdrop-filter: blur(16px);
-            background: rgba(10, 10, 15, 0.7);
-            border-bottom: 1px solid transparent;
-            transition: all 0.3s;
-        }
-
-        [data-theme="light"] #navbar {
-            background: rgba(245, 244, 240, 0.8);
-        }
-
-        #navbar.scrolled {
-            border-bottom-color: var(--border);
-        }
-
-        .nav-logo {
-            font-family: 'Syne', sans-serif;
-            font-weight: 800;
-            font-size: 1.1rem;
-            color: var(--text);
-            text-decoration: none;
-        }
-
-        .nav-logo span {
-            color: var(--accent);
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-links a {
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 0.875rem;
-            font-weight: 500;
-            letter-spacing: 0.02em;
-            position: relative;
-            transition: color 0.2s;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -4px;
-            left: 0;
-            right: 0;
-            height: 2px;
-            background: var(--accent);
-            transform: scaleX(0);
-            transition: transform 0.2s;
-        }
-
-        .nav-links a:hover {
-            color: var(--text);
-        }
-
-        .nav-links a:hover::after {
-            transform: scaleX(1);
-        }
-
-        .nav-controls {
-            display: flex;
-            gap: 0.75rem;
-            align-items: center;
-        }
-
-        .btn-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--bg3);
-            color: var(--text);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.2s;
-            font-size: 0.875rem;
-            font-weight: 600;
-            font-family: 'Syne', sans-serif;
-        }
-
-        .btn-icon:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-        }
-
-        /* Hero */
-        #hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            padding: 6rem 2rem 4rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-glow {
-            position: absolute;
-            width: 600px;
-            height: 600px;
-            border-radius: 50%;
-            filter: blur(120px);
-            pointer-events: none;
-        }
-
-        .hero-glow-1 {
-            background: rgba(255, 107, 53, 0.15);
-            top: -100px;
-            right: -100px;
-            animation: floatGlow1 8s ease-in-out infinite;
-        }
-
-        .hero-glow-2 {
-            background: rgba(0, 212, 255, 0.08);
-            bottom: -200px;
-            left: -100px;
-            animation: floatGlow2 10s ease-in-out infinite;
-        }
-
-        @keyframes floatGlow1 {
-
-            0%,
-            100% {
-                transform: translate(0, 0)
-            }
-
-            50% {
-                transform: translate(-30px, 30px)
-            }
-        }
-
-        @keyframes floatGlow2 {
-
-            0%,
-            100% {
-                transform: translate(0, 0)
-            }
-
-            50% {
-                transform: translate(30px, -20px)
-            }
-        }
-
-        .hero-content {
-            max-width: 1100px;
-            margin: 0 auto;
-            width: 100%;
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-tag {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: 1px solid var(--border);
-            border-radius: 100px;
-            padding: 0.375rem 1rem;
-            margin-bottom: 2rem;
-            font-size: 0.8rem;
-            color: var(--muted);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            background: var(--bg3);
-        }
-
-        .hero-tag .dot {
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #22C55E;
-            animation: pulse 2s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                opacity: 1;
-                transform: scale(1)
-            }
-
-            50% {
-                opacity: 0.5;
-                transform: scale(1.3)
-            }
-        }
-
-        .hero-name {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(3rem, 8vw, 6.5rem);
-            font-weight: 800;
-            line-height: 0.95;
-            letter-spacing: -0.02em;
-            margin-bottom: 0.5rem;
-        }
-
-        .hero-name .accent {
-            color: var(--accent);
-        }
-
-        .hero-name .accent2 {
-            color: var(--accent2);
-        }
-
-        .hero-title {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(1rem, 2.5vw, 1.5rem);
-            font-weight: 500;
-            color: var(--muted);
-            margin-bottom: 1.5rem;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-        }
-
-        #typed-text {
-            color: var(--accent);
-        }
-
-        .cursor {
-            animation: blink 0.7s infinite;
-            color: var(--accent);
-        }
-
-        @keyframes blink {
-
-            0%,
-            100% {
-                opacity: 1
-            }
-
-            50% {
-                opacity: 0
-            }
-        }
-
-        .hero-desc {
-            max-width: 600px;
-            font-size: 1.1rem;
-            line-height: 1.7;
-            color: var(--muted);
-            margin-bottom: 2.5rem;
-        }
-
-        .hero-cta {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-            margin-bottom: 3rem;
-        }
-
-        .btn-primary {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--accent);
-            color: #fff;
-            padding: 0.75rem 1.75rem;
-            border-radius: 100px;
-            font-family: 'Syne', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-decoration: none;
-            transition: all 0.25s;
-            border: 2px solid var(--accent);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(255, 107, 53, 0.35);
-        }
-
-        .btn-outline {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: transparent;
-            color: var(--text);
-            padding: 0.75rem 1.75rem;
-            border-radius: 100px;
-            font-family: 'Syne', sans-serif;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-decoration: none;
-            transition: all 0.25s;
-            border: 2px solid var(--border);
-        }
-
-        .btn-outline:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .hero-socials {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .social-link {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--muted);
-            text-decoration: none;
-            font-size: 0.85rem;
-            transition: color 0.2s;
-        }
-
-        .social-link svg {
-            width: 16px;
-            height: 16px;
-        }
-
-        .social-link:hover {
-            color: var(--accent);
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 3rem;
-            margin-top: 4rem;
-            flex-wrap: wrap;
-            padding-top: 2rem;
-            border-top: 1px solid var(--border);
-        }
-
-        .stat-num {
-            font-family: 'Syne', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--accent);
-            line-height: 1;
-        }
-
-        .stat-label {
-            font-size: 0.8rem;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 4px;
-        }
-
-        /* Section styles */
-        section {
-            padding: 5rem 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .section-inner {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .section-eyebrow {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.75rem;
-            font-weight: 600;
-            letter-spacing: 0.15em;
-            text-transform: uppercase;
-            color: var(--accent);
-            margin-bottom: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .section-eyebrow::before {
-            content: '';
-            display: block;
-            width: 24px;
-            height: 2px;
-            background: var(--accent);
-        }
-
-        .section-title {
-            font-family: 'Syne', sans-serif;
-            font-size: clamp(1.75rem, 4vw, 2.75rem);
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            line-height: 1.1;
-            margin-bottom: 1rem;
-        }
-
-        .section-subtitle {
-            color: var(--muted);
-            font-size: 1rem;
-            line-height: 1.6;
-            max-width: 560px;
-        }
-
-        .section-header {
-            margin-bottom: 3rem;
-        }
-
-        /* About */
-        #about {
-            background: var(--bg2);
-        }
-
-        .about-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        .about-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem;
-        }
-
-        .about-avatar {
-            width: 120px;
-            height: 120px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, var(--accent), var(--accent2));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-family: 'Syne', sans-serif;
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .about-avatar::after {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, transparent 50%, rgba(255, 255, 255, 0.1));
-        }
-
-        .about-info p {
-            color: var(--muted);
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .about-meta {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .meta-item {}
-
-        .meta-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--muted);
-        }
-
-        .meta-value {
-            font-size: 0.9rem;
-            color: var(--text);
-            font-weight: 500;
-            margin-top: 2px;
-        }
-
-        .about-text p {
-            color: var(--muted);
-            line-height: 1.8;
-            font-size: 1rem;
-        }
-
-        .about-text p+p {
-            margin-top: 1rem;
-        }
-
-        .about-highlight {
-            color: var(--text);
-            font-weight: 500;
-        }
-
-        /* Skills */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .skill-category {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: border-color 0.2s, transform 0.2s;
-        }
-
-        .skill-category:hover {
-            border-color: var(--accent);
-            transform: translateY(-3px);
-        }
-
-        .skill-cat-title {
-            font-family: 'Syne', sans-serif;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--muted);
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .skill-cat-icon {
-            font-size: 1rem;
-        }
-
-        .skill-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-        }
-
-        .skill-tag {
-            padding: 0.35rem 0.8rem;
-            border-radius: 100px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border: 1px solid var(--border);
-            background: var(--bg3);
-            color: var(--text);
-            transition: all 0.2s;
-        }
-
-        .skill-tag:hover {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(255, 107, 53, 0.08);
-        }
-
-        .skill-tag.highlight {
-            border-color: var(--accent);
-            color: var(--accent);
-            background: rgba(255, 107, 53, 0.1);
-        }
-
-        /* Timeline */
-        #experience {
-            background: var(--bg2);
-        }
-
-        .timeline {
-            position: relative;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            left: 12px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
-        }
-
-        .timeline-item {
-            padding-left: 3rem;
-            position: relative;
-            margin-bottom: 2.5rem;
-        }
-
-        .timeline-dot {
-            position: absolute;
-            left: 0;
-            top: 4px;
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            background: var(--card);
-            border: 2px solid var(--accent);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .timeline-dot-inner {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: var(--accent);
-        }
-
-        .timeline-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: border-color 0.2s;
-        }
-
-        .timeline-card:hover {
-            border-color: var(--accent);
-        }
-
-        .timeline-period {
-            font-size: 0.75rem;
-            color: var(--accent);
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 0.35rem;
-        }
-
-        .timeline-role {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.05rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .timeline-company {
-            font-size: 0.875rem;
-            color: var(--muted);
-            margin-bottom: 1rem;
-        }
-
-        .timeline-bullets {
-            list-style: none;
-        }
-
-        .timeline-bullets li {
-            font-size: 0.875rem;
-            color: var(--muted);
-            line-height: 1.6;
-            padding-left: 1rem;
-            position: relative;
-            margin-bottom: 0.4rem;
-        }
-
-        .timeline-bullets li::before {
-            content: '→';
-            position: absolute;
-            left: 0;
-            color: var(--accent);
-            font-size: 0.75rem;
-        }
-
-        /* Projects */
-        .projects-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .project-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 1.75rem;
-            transition: all 0.3s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .project-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, var(--accent), var(--accent2));
-            transform: scaleX(0);
-            transition: transform 0.3s;
-        }
-
-        .project-card:hover {
-            border-color: var(--accent);
-            transform: translateY(-4px);
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.2);
-        }
-
-        .project-card:hover::before {
-            transform: scaleX(1);
-        }
-
-        .project-company {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--muted);
-            margin-bottom: 0.5rem;
-        }
-
-        .project-name {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.05rem;
-            font-weight: 700;
-            margin-bottom: 0.75rem;
-            line-height: 1.3;
-        }
-
-        .project-desc {
-            font-size: 0.875rem;
-            color: var(--muted);
-            line-height: 1.6;
-            margin-bottom: 1.25rem;
-        }
-
-        .project-tech {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.4rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .tech-badge {
-            padding: 0.2rem 0.6rem;
-            border-radius: 4px;
-            font-size: 0.72rem;
-            font-weight: 600;
-            background: var(--bg3);
-            color: var(--muted);
-            border: 1px solid var(--border);
-        }
-
-        .project-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.4rem;
-            color: var(--accent2);
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-decoration: none;
-            transition: gap 0.2s;
-        }
-
-        .project-link:hover {
-            gap: 0.7rem;
-        }
-
-        .project-link svg {
-            width: 14px;
-            height: 14px;
-        }
-
-        /* Contact */
-        #contact {
-            background: var(--bg2);
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: start;
-        }
-
-        .contact-links {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 14px;
-            padding: 1rem 1.25rem;
-            text-decoration: none;
-            color: var(--text);
-            transition: all 0.2s;
-        }
-
-        .contact-item:hover {
-            border-color: var(--accent);
-            transform: translateX(4px);
-        }
-
-        .contact-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: var(--bg3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.1rem;
-            flex-shrink: 0;
-        }
-
-        .contact-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-            color: var(--muted);
-        }
-
-        .contact-value {
-            font-size: 0.9rem;
-            font-weight: 500;
-            margin-top: 2px;
-        }
-
-        .availability-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 2rem;
-        }
-
-        .avail-status {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.3);
-            border-radius: 100px;
-            padding: 0.4rem 1rem;
-            font-size: 0.8rem;
-            color: #22C55E;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-
-        /* Footer */
-        footer {
-            background: var(--bg);
-            border-top: 1px solid var(--border);
-            padding: 2rem;
-            text-align: center;
-            color: var(--muted);
-            font-size: 0.8rem;
-        }
-
-        /* Scroll reveal */
-        .reveal {
-            opacity: 0;
-            transform: translateY(24px);
-            transition: opacity 0.6s, transform 0.6s;
-        }
-
-        .reveal.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Mobile */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
-            }
-
-            .about-grid,
-            .contact-grid {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-
-            .hero-stats {
-                gap: 2rem;
-            }
-
-            section {
-                padding: 4rem 1.25rem;
-            }
-
-            #navbar {
-                padding: 1rem 1.25rem;
-            }
-        }
-
-        /* Education section */
-        .edu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .edu-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 1.5rem;
-            transition: border-color 0.2s, transform 0.2s;
-        }
-
-        .edu-card:hover {
-            border-color: var(--accent2);
-            transform: translateY(-3px);
-        }
-
-        .edu-degree {
-            font-family: 'Syne', sans-serif;
-            font-size: 1rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .edu-school {
-            color: var(--accent2);
-            font-size: 0.875rem;
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .edu-period {
-            font-size: 0.75rem;
-            color: var(--muted);
-            margin-bottom: 0.75rem;
-        }
-
-        .edu-note {
-            font-size: 0.825rem;
-            color: var(--muted);
-            line-height: 1.6;
-        }
+/* Hallmark · genre: modern-minimal · macrostructure: Stat-Led · theme: Cobalt
+ * enrichment: code-card hero (Tier A, typographic frame — no fake window chrome)
+ * nav: N13 Inline ⌘K pill + N1b link cluster · footer: Ft2 Inline single line
+ * accent hue: 256 (electric cobalt) · studied: no
+ */
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow-x: clip; }
+html { scroll-behavior: smooth; }
+
+body {
+    background: var(--color-paper);
+    color: var(--color-ink-2);
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.6;
+    transition: background var(--dur-long) var(--ease-out), color var(--dur-long) var(--ease-out);
+}
+
+h1, h2, h3 { font-family: var(--font-display); color: var(--color-ink); font-style: normal; line-height: 1.05; letter-spacing: -0.02em; }
+p { max-width: 65ch; }
+a { color: inherit; }
+img { max-width: 100%; display: block; }
+
+::selection { background: color-mix(in oklch, var(--color-accent) 30%, transparent); }
+
+:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 3px;
+}
+
+.tnum { font-variant-numeric: tabular-nums; }
+.mono { font-family: var(--font-mono); }
+
+.section-inner { max-width: var(--page-max); margin: 0 auto; padding-inline: var(--page-gutter); }
+section { padding-block: var(--space-3xl); position: relative; }
+section + section { border-top: 1px solid var(--color-rule); }
+
+.section-head { margin-bottom: var(--space-2xl); max-width: 60ch; }
+.section-head h2 { font-size: var(--text-2xl); font-weight: 600; margin-bottom: var(--space-xs); }
+.section-sub { color: var(--color-muted); font-size: var(--text-md); max-width: 52ch; }
+
+/* — reveal — */
+.reveal {
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity var(--dur-long) var(--ease-out), transform var(--dur-long) var(--ease-out);
+    transition-delay: calc(var(--i, 0) * 60ms);
+}
+.reveal.is-in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+    .reveal { transition-duration: 1ms; transform: none; }
+}
+
+/* ============ NAV ============ */
+.nav {
+    position: fixed; inset: 0 0 auto; z-index: var(--z-sticky);
+    background: transparent; border-bottom: 1px solid transparent;
+    transition: background var(--dur-short) var(--ease-out), border-color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+}
+.nav.is-scrolled {
+    background: color-mix(in oklch, var(--color-paper) 82%, transparent);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom-color: var(--color-rule);
+    box-shadow: 0 8px 28px -20px oklch(0% 0 0 / 0.35);
+}
+.nav__inner {
+    max-width: var(--page-max); margin: 0 auto; padding-inline: var(--page-gutter);
+    height: 64px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: var(--space-lg);
+}
+.nav__brand {
+    font-family: var(--font-display); font-weight: 600; font-size: var(--text-md);
+    text-decoration: none; color: var(--color-ink); white-space: nowrap;
+}
+.fn { font-family: var(--font-mono); color: var(--color-accent); font-weight: 500; margin-left: 1px; }
+
+.nav__center { display: flex; justify-content: center; }
+.searchpill {
+    display: flex; align-items: center; gap: 0.6rem;
+    height: 38px; padding: 0 0.6rem 0 0.9rem;
+    background: var(--color-paper-2); border: 1px solid var(--color-rule);
+    border-radius: var(--radius-control); color: var(--color-muted);
+    cursor: pointer; font-family: var(--font-body); font-size: var(--text-sm);
+    transition: border-color var(--dur-short) var(--ease-out), box-shadow var(--dur-short) var(--ease-out);
+    white-space: nowrap;
+}
+.searchpill:hover, .searchpill:focus-visible { border-color: var(--color-rule-2); }
+.searchpill__kbd { display: flex; gap: 0.2rem; }
+.searchpill kbd {
+    font-family: var(--font-mono); font-size: 0.65rem; color: var(--color-muted);
+    border: 1px solid var(--color-rule-2); border-radius: 4px; padding: 1px 5px; background: var(--color-paper);
+}
+
+.nav__right { display: flex; align-items: center; gap: var(--space-md); justify-self: end; }
+.nav__link {
+    font-size: var(--text-sm); font-weight: 500; text-decoration: none; color: var(--color-ink-2);
+    white-space: nowrap; position: relative;
+}
+.nav__link::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: var(--color-accent);
+    transform: scaleX(0); transition: transform var(--dur-short) var(--ease-out);
+}
+.nav__link:hover::after, .nav__link:focus-visible::after { transform: scaleX(1); }
+
+.icon-btn {
+    width: 36px; height: 36px; border-radius: var(--radius-control);
+    border: 1px solid var(--color-rule); background: var(--color-paper-2); color: var(--color-ink-2);
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 600;
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    transition: border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out);
+}
+.icon-btn:hover { border-color: var(--color-accent); color: var(--color-accent); }
+
+.btn {
+    display: inline-flex; align-items: center; gap: 0.45rem;
+    font-family: var(--font-display); font-weight: 600; font-size: var(--text-sm);
+    padding: 0.65rem 1.15rem; border-radius: var(--radius-control);
+    text-decoration: none; white-space: nowrap; border: 1px solid transparent; cursor: pointer;
+    transition: background-color var(--dur-short) var(--ease-out), transform 100ms var(--ease-out), border-color var(--dur-short) var(--ease-out);
+}
+.btn--accent { background: var(--color-accent); color: var(--color-accent-ink); }
+.btn--accent:hover { background: var(--color-accent-strong); transform: translateY(-1px); }
+.btn--accent:active { transform: translateY(0); }
+
+.link {
+    display: inline-flex; align-items: center; gap: 0.35rem;
+    text-decoration: none; color: var(--color-ink); font-weight: 500; font-size: var(--text-sm);
+    border-bottom: 1px solid var(--color-rule-2); padding-bottom: 1px; white-space: nowrap;
+    transition: border-color var(--dur-short) var(--ease-out), color var(--dur-short) var(--ease-out), gap var(--dur-short) var(--ease-out);
+}
+.link:hover { color: var(--color-accent); border-color: var(--color-accent); gap: 0.55rem; }
+
+@media (max-width: 62.5rem) {
+    .nav__link { display: none; }
+    .searchpill__text { display: none; }
+    .searchpill { padding-inline: 0.55rem; }
+}
+@media (max-width: 26rem) {
+    .icon-btn { display: none; }
+    .searchpill__kbd { display: none; }
+    .nav__inner { gap: var(--space-sm); }
+}
+
+/* ============ CMDK PALETTE ============ */
+.cmdk {
+    position: fixed; inset: 0; z-index: var(--z-modal);
+    opacity: 0; visibility: hidden;
+    transition: opacity var(--dur-short) var(--ease-out), visibility var(--dur-short) var(--ease-out);
+}
+.cmdk.is-open { opacity: 1; visibility: visible; }
+.cmdk__backdrop { position: absolute; inset: 0; background: oklch(20% 0.02 258 / 0.45); backdrop-filter: blur(2px); }
+.cmdk__panel {
+    position: absolute; top: 14vh; left: 50%;
+    transform: translateX(-50%) translateY(-8px) scale(0.98);
+    width: min(560px, calc(100vw - 2rem));
+    background: var(--color-paper); border: 1px solid var(--color-rule-2);
+    border-radius: var(--radius-card); box-shadow: 0 24px 60px -20px oklch(20% 0.02 258 / 0.35);
+    transition: transform var(--dur-short) var(--ease-out);
+    display: flex; flex-direction: column; max-height: 70vh; overflow: hidden;
+}
+.cmdk.is-open .cmdk__panel { transform: translateX(-50%) translateY(0) scale(1); }
+.cmdk__field {
+    display: flex; align-items: center; gap: 0.6rem;
+    padding: var(--space-md) var(--space-lg); border-bottom: 1px solid var(--color-rule);
+}
+.cmdk__field input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-family: var(--font-body); font-size: var(--text-md); color: var(--color-ink);
+}
+.cmdk__field kbd, .cmdk__foot kbd {
+    font-family: var(--font-mono); font-size: 0.68rem; color: var(--color-muted);
+    border: 1px solid var(--color-rule-2); border-radius: 4px; padding: 1px 6px;
+}
+.cmdk__results { overflow-y: auto; padding: var(--space-sm); }
+.cmdk__group {
+    font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--color-muted); padding: var(--space-sm) var(--space-sm) var(--space-2xs);
+}
+.cmdk__item {
+    display: flex; width: 100%; text-align: left; align-items: center; gap: var(--space-sm);
+    padding: 0.6rem var(--space-sm); border: none; background: transparent; border-radius: var(--radius-control);
+    font-family: var(--font-body); font-size: var(--text-sm); color: var(--color-ink-2); cursor: pointer;
+}
+.cmdk__item.is-active, .cmdk__item:hover { background: var(--color-paper-2); color: var(--color-ink); }
+.cmdk__item[hidden] { display: none; }
+.cmdk__foot {
+    display: flex; gap: var(--space-lg); padding: var(--space-sm) var(--space-lg);
+    border-top: 1px solid var(--color-rule); font-size: var(--text-xs); color: var(--color-muted);
+}
+.cmdk__foot span { display: flex; align-items: center; gap: 0.3rem; }
+
+/* ============ HERO ============ */
+.hero {
+    min-height: clamp(60vh, 78dvh, 88dvh);
+    display: flex; align-items: center;
+    padding-block: calc(var(--space-3xl) + 64px) var(--space-3xl);
+    padding-inline: var(--page-gutter);
+}
+.hero__inner {
+    max-width: var(--page-max); margin: 0 auto; width: 100%;
+    display: grid; grid-template-columns: 1.05fr 0.95fr; gap: var(--space-2xl); align-items: center;
+}
+.hero__meta {
+    font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.08em;
+    color: var(--color-muted); margin-bottom: var(--space-lg);
+}
+.figure {
+    font-family: var(--font-display); font-weight: 600; line-height: 0.9; letter-spacing: -0.02em;
+    font-size: clamp(4.25rem, 10vw, 7.5rem); color: var(--color-ink); display: inline-flex; align-items: flex-start;
+}
+.figure .unit { color: var(--color-accent); font-size: 0.5em; margin-left: 2px; }
+.hero__headline {
+    font-size: clamp(1.4rem, 2.6vw, 2rem); font-weight: 500; line-height: 1.2; max-width: 22ch; margin-top: var(--space-xs);
+}
+.hero__lede { color: var(--color-muted); font-size: var(--text-md); line-height: 1.65; margin-top: var(--space-lg); max-width: 52ch; }
+.hero__cta { display: flex; align-items: center; gap: var(--space-lg); flex-wrap: wrap; margin-top: var(--space-xl); }
+.hero__badge {
+    display: inline-flex; align-items: center; gap: 0.55rem; margin-top: var(--space-xl);
+    font-size: var(--text-sm); color: var(--color-muted);
+}
+.dot-live { width: 7px; height: 7px; border-radius: 50%; background: #22c55e; box-shadow: 0 0 0 3px color-mix(in oklch, #22c55e 20%, transparent); flex-shrink: 0; }
+
+/* code-card — typographic frame, no drawn window chrome */
+.code-card {
+    background: var(--color-graphite); border: 1px solid var(--color-graphite-rule);
+    border-radius: var(--radius-code); overflow: hidden;
+    box-shadow: 0 1px 2px oklch(24% 0.02 258 / 0.08);
+}
+.code-card__head {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-sm) var(--space-lg); border-bottom: 1px solid var(--color-graphite-rule);
+}
+.code-card__file { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-graphite-muted); }
+.code-card__status {
+    font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500; letter-spacing: 0.06em;
+    color: var(--color-accent);
+}
+.code-card__body {
+    font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.7; color: var(--color-graphite-muted);
+    padding: var(--space-lg); overflow-x: auto; white-space: pre;
+}
+.tok-key { color: var(--color-graphite-ink); }
+.tok-str { color: var(--color-accent); }
+.tok-num { color: var(--color-accent); }
+.caret { display: inline-block; width: 0.55ch; background: var(--color-accent); animation: blink 1s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .caret { animation: none; } }
+
+@media (max-width: 60rem) {
+    .hero__inner { grid-template-columns: 1fr; }
+    .code-card { order: -1; }
+}
+@media (max-width: 30rem) {
+    .code-card__body { font-size: 0.72rem; white-space: pre-wrap; word-break: break-word; }
+}
+
+/* ============ STAT STRIP ============ */
+.stat-strip__inner {
+    max-width: var(--page-max); margin: 0 auto; padding-inline: var(--page-gutter);
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--space-xl);
+    padding-block: var(--space-xl); border-top: 1px solid var(--color-rule); border-bottom: 1px solid var(--color-rule);
+}
+.stat-strip__inner b { display: block; font-family: var(--font-display); font-weight: 600; font-size: var(--text-2xl); color: var(--color-ink); }
+.stat-strip__inner span { font-size: var(--text-sm); color: var(--color-muted); }
+@media (max-width: 48rem) { .stat-strip__inner { grid-template-columns: repeat(2, 1fr); } }
+
+/* ============ ABOUT ============ */
+.about-grid { display: grid; grid-template-columns: 0.85fr 1.15fr; gap: var(--space-2xl); }
+.about-lede p { font-family: var(--font-display); font-weight: 500; font-size: var(--text-lg); color: var(--color-ink); line-height: 1.35; }
+.about-body p { color: var(--color-muted); font-size: var(--text-base); line-height: 1.75; }
+.about-body p + p { margin-top: var(--space-md); }
+.about-body .hl { color: var(--color-ink); font-weight: 500; }
+@media (max-width: 55rem) { .about-grid { grid-template-columns: 1fr; gap: var(--space-lg); } }
+
+/* ============ SPEC SHEET (skills + education) ============ */
+.spec-sheet { display: grid; }
+.spec-row {
+    display: grid; grid-template-columns: 11rem 1fr; gap: var(--space-lg);
+    padding-block: var(--space-md); border-top: 1px solid var(--color-rule);
+}
+.spec-row:first-child { border-top: none; }
+.spec-row dt {
+    font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-muted); padding-top: 2px;
+}
+.spec-row dd { margin: 0; color: var(--color-ink-2); font-size: var(--text-base); line-height: 1.7; }
+.spec-row dd .muted { color: var(--color-muted); font-size: var(--text-sm); display: block; margin-top: var(--space-2xs); }
+@media (max-width: 40rem) { .spec-row { grid-template-columns: 1fr; gap: var(--space-2xs); } }
+
+/* ============ EXPERIENCE — dark graphite band, changelog ============ */
+.band-dark {
+    background: var(--color-graphite); color: var(--color-graphite-muted);
+}
+.band-dark h2, .band-dark h3 { color: var(--color-graphite-ink); }
+.band-dark .section-sub { color: var(--color-graphite-muted); }
+.band-dark section + section,
+.band-dark + section { border-top: none; }
+
+.changelog { list-style: none; display: grid; gap: var(--space-2xl); }
+.changelog__entry {
+    display: grid; grid-template-columns: 9rem 1fr; gap: var(--space-xl);
+    padding-block: var(--space-xl); border-top: 1px solid var(--color-graphite-rule);
+}
+.changelog__entry:first-child { border-top: none; padding-top: 0; }
+.changelog__meta { display: flex; flex-direction: column; gap: var(--space-xs); }
+.changelog__tag {
+    font-family: var(--font-mono); font-size: var(--text-sm); font-weight: 500; color: var(--color-accent);
+}
+.changelog__status {
+    font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.06em;
+    color: var(--color-graphite-muted);
+}
+.changelog__body h3 { font-size: var(--text-lg); font-weight: 600; margin-bottom: var(--space-2xs); }
+.changelog__org { display: block; font-family: var(--font-body); font-weight: 400; font-size: var(--text-sm); color: var(--color-graphite-muted); margin-top: var(--space-3xs); }
+.changelog__body ul { list-style: none; margin-top: var(--space-md); display: grid; gap: var(--space-sm); }
+.changelog__body li { position: relative; padding-left: 1.1rem; font-size: var(--text-sm); line-height: 1.65; }
+.changelog__body li::before { content: "›"; position: absolute; left: 0; color: var(--color-accent); }
+@media (max-width: 48rem) {
+    .changelog__entry { grid-template-columns: 1fr; gap: var(--space-sm); }
+}
+
+/* ============ PROJECTS ============ */
+.project-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space-lg); }
+.project {
+    display: flex; flex-direction: column; gap: var(--space-sm);
+    padding: var(--space-lg); border: 1px solid var(--color-rule); border-radius: var(--radius-card);
+    transition: border-color var(--dur-short) var(--ease-out);
+}
+.project:hover { border-color: var(--color-rule-2); }
+.project__head { display: flex; align-items: baseline; justify-content: space-between; gap: var(--space-sm); }
+.project__org { font-family: var(--font-mono); font-size: var(--text-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-muted); }
+.project__year { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-muted); }
+.project__name { font-size: var(--text-md); font-weight: 600; line-height: 1.3; }
+.project__desc { font-size: var(--text-sm); color: var(--color-muted); line-height: 1.6; flex: 1; }
+.project__tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.project__tags span {
+    font-family: var(--font-mono); font-size: 0.68rem; padding: 0.2rem 0.5rem; border-radius: 4px;
+    border: 1px solid var(--color-rule); color: var(--color-muted);
+}
+.project__status { font-family: var(--font-mono); font-size: var(--text-xs); color: var(--color-muted); }
+@media (max-width: 60rem) { .project-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 40rem) { .project-grid { grid-template-columns: minmax(0, 1fr); } }
+
+/* ============ CONTACT ============ */
+.contact-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: var(--space-2xl); align-items: start; }
+.avail-chip {
+    display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: var(--space-lg);
+    font-size: var(--text-sm); color: var(--color-muted);
+}
+.contact-grid h2 { font-size: var(--text-2xl); max-width: 16ch; margin-bottom: var(--space-sm); }
+.contact-grid .btn { margin-top: var(--space-xl); }
+.contact-links { display: flex; flex-direction: column; gap: var(--space-md); padding-top: var(--space-2xs); }
+@media (max-width: 50rem) { .contact-grid { grid-template-columns: 1fr; gap: var(--space-lg); } }
+
+/* ============ FOOTER (Ft2) ============ */
+.foot-line {
+    padding: var(--space-lg) var(--page-gutter); border-top: 1px solid var(--color-rule);
+    display: flex; justify-content: center;
+}
+.foot-line p { font-size: var(--text-sm); color: var(--color-muted); text-align: center; }
+.foot-line .wordmark { font-family: var(--font-display); font-weight: 600; color: var(--color-ink-2); }
     </style>
 </head>
 
 <body>
 
-    <!-- NAVBAR -->
-    <nav id="navbar">
-        <a href="#hero" class="nav-logo">greyfikal<span>.</span>web<span>.</span>id</a>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="#about" data-en="About" data-id="Tentang">About</a></li>
-            <li><a href="#skills" data-en="Skills" data-id="Keahlian">Skills</a></li>
-            <li><a href="#experience" data-en="Experience" data-id="Pengalaman">Experience</a></li>
-            <li><a href="#projects" data-en="Projects" data-id="Proyek">Projects</a></li>
-            <li><a href="#contact" data-en="Contact" data-id="Kontak">Contact</a></li>
-        </ul>
-        <div class="nav-controls">
-            <button class="btn-icon" id="lang-btn" title="Switch Language">EN</button>
-            <button class="btn-icon" id="theme-btn" title="Toggle Theme">☀️</button>
+    <!-- NAV — N13 inline ⌘K pill + N1b link cluster -->
+    <header class="nav" id="nav">
+        <div class="nav__inner">
+            <a href="#hero" class="nav__brand">greyfikal<span class="fn">()</span></a>
+            <div class="nav__center">
+                <button class="searchpill" id="searchpill" aria-haspopup="dialog" aria-controls="cmdk">
+                    <span aria-hidden="true">⌕</span>
+                    <span class="searchpill__text" data-en="Jump to…" data-id="Lompat ke…">Jump to…</span>
+                    <span class="searchpill__kbd"><kbd>⌘</kbd><kbd>K</kbd></span>
+                </button>
+            </div>
+            <nav class="nav__right">
+                <a class="nav__link" href="#projects" data-en="Work" data-id="Karya">Work</a>
+                <a class="nav__link" href="#experience" data-en="Experience" data-id="Pengalaman">Experience</a>
+                <button class="icon-btn" id="lang-btn" aria-label="Switch language" title="Switch language">EN</button>
+                <button class="icon-btn" id="theme-btn" aria-label="Toggle theme" title="Toggle theme">◐</button>
+                <a class="btn btn--accent" href="#contact" data-en="Contact" data-id="Kontak">Contact</a>
+            </nav>
         </div>
-    </nav>
+    </header>
 
-    <!-- HERO -->
-    <section id="hero">
-        <div class="hero-glow hero-glow-1"></div>
-        <div class="hero-glow hero-glow-2"></div>
-        <div class="hero-content">
-            <div class="hero-tag">
-                <span class="dot"></span>
-                <span data-en="Available for work" data-id="Tersedia untuk bekerja">Available for work</span>
+    <!-- CMDK COMMAND PALETTE -->
+    <div class="cmdk" id="cmdk" aria-hidden="true">
+        <div class="cmdk__backdrop" data-close></div>
+        <div class="cmdk__panel" role="dialog" aria-modal="true" aria-label="Command menu">
+            <div class="cmdk__field">
+                <span aria-hidden="true">⌕</span>
+                <input id="cmdk-input" placeholder="Jump to a section, or run a command…" autocomplete="off" />
+                <kbd>esc</kbd>
             </div>
-            <h1 class="hero-name">
-                <span>GREYFIKAL</span><br>
-                <span class="accent">APRIYUDA</span>
-            </h1>
-            <p class="hero-title">
-                <span id="typed-text"></span><span class="cursor">|</span>
-            </p>
-            <p class="hero-desc"
-                data-en="Results-driven Software Engineer with 7+ years building performance-critical applications. Strong background in full-stack development, system architecture, and cybersecurity."
-                data-id="Software Engineer berpengalaman 7+ tahun membangun aplikasi kritis di lingkungan produksi. Latar belakang kuat di full-stack development, arsitektur sistem, dan keamanan siber.">
-                Results-driven Software Engineer with 7+ years building performance-critical applications. Strong
-                background in full-stack development, system architecture, and cybersecurity.
-            </p>
-            <div class="hero-cta">
-                <a href="#projects" class="btn-primary" data-en="View Projects" data-id="Lihat Proyek">View Projects
-                    →</a>
-                <a href="#contact" class="btn-outline" data-en="Get In Touch" data-id="Hubungi Saya">Get In Touch</a>
+            <div class="cmdk__results" id="cmdk-results">
+                <p class="cmdk__group">Sections</p>
+                <button class="cmdk__item" data-goto="#hero">Home</button>
+                <button class="cmdk__item" data-goto="#about">About</button>
+                <button class="cmdk__item" data-goto="#skills">Skills &amp; stack</button>
+                <button class="cmdk__item" data-goto="#experience">Experience</button>
+                <button class="cmdk__item" data-goto="#education">Education</button>
+                <button class="cmdk__item" data-goto="#projects">Projects</button>
+                <button class="cmdk__item" data-goto="#contact">Contact</button>
+                <p class="cmdk__group">Commands</p>
+                <button class="cmdk__item" data-cmd="theme">Toggle theme (light / dark)</button>
+                <button class="cmdk__item" data-cmd="lang">Switch language (EN / ID)</button>
+                <button class="cmdk__item" data-cmd="copy-email">Copy email address</button>
+                <button class="cmdk__item" data-cmd="github">Open GitHub profile ↗</button>
             </div>
-            <div class="hero-socials">
-                <a href="https://github.com/gryfklapryd" class="social-link" target="_blank" rel="noopener">
-                    <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z" />
-                    </svg>
-                    GitHub
-                </a>
-                <a href="https://linkedin.com/in/gryfklapryd" class="social-link" target="_blank" rel="noopener">
-                    <svg fill="currentColor" viewBox="0 0 24 24">
-                        <path
-                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
-                    LinkedIn
-                </a>
-                <a href="https://greyfikal.web.id" class="social-link" target="_blank" rel="noopener">
-                    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                        <circle cx="12" cy="12" r="10" />
-                        <path
-                            d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
-                    </svg>
-                    Website
-                </a>
+            <div class="cmdk__foot">
+                <span><kbd>↑</kbd><kbd>↓</kbd> navigate</span>
+                <span><kbd>↵</kbd> select</span>
+                <span><kbd>esc</kbd> close</span>
             </div>
-            <div class="hero-stats">
+        </div>
+    </div>
+
+    <!-- HERO — Stat-Led -->
+    <section class="hero" id="hero">
+        <div class="hero__inner">
+            <div class="hero__copy">
+                <p class="hero__meta" data-en="Backend-focused Software Developer · Jakarta, ID (GMT+7)" data-id="Software Developer fokus backend · Jakarta, ID (GMT+7)">Backend-focused Software Developer · Jakarta, ID (GMT+7)</p>
                 <div>
-                    <div class="stat-num">7+</div>
-                    <div class="stat-label" data-en="Years Dev Exp." data-id="Tahun Pengalaman Dev">Years Dev Exp.</div>
+                    <span class="figure tnum" id="stat-hero" data-target="8">0<span class="unit">+</span></span>
+                    <p class="hero__headline" data-en="years turning government paperwork into production systems." data-id="tahun mengubah proses administrasi pemerintahan menjadi sistem produksi.">years turning government paperwork into production systems.</p>
                 </div>
-                <div>
-                    <div class="stat-num">8+</div>
-                    <div class="stat-label" data-en="Years SysAdmin" data-id="Tahun SysAdmin">Years SysAdmin</div>
+                <p class="hero__lede" data-en="Since 2017 — spanning system/network administration and full-stack development. I build and maintain multi-tenant platforms across Laravel 10–13, and lead backend work on a Go microservices + Next.js member portal shipped via Kubernetes and ArgoCD."
+                    data-id="Sejak 2017 — mencakup administrasi sistem/jaringan hingga pengembangan full-stack. Saya membangun dan memelihara platform multi-tenant di Laravel 10–13, serta memimpin pengembangan backend portal anggota berbasis Go microservices + Next.js yang dirilis via Kubernetes dan ArgoCD.">
+                    Since 2017 — spanning system/network administration and full-stack development. I build and maintain
+                    multi-tenant platforms across Laravel 10–13, and lead backend work on a Go microservices + Next.js
+                    member portal shipped via Kubernetes and ArgoCD.
+                </p>
+                <div class="hero__cta">
+                    <a href="#projects" class="btn btn--accent" data-en="View the work →" data-id="Lihat karya →">View the work →</a>
+                    <a href="#contact" class="link" data-en="Get in touch →" data-id="Hubungi saya →">Get in touch →</a>
                 </div>
-                <div>
-                    <div class="stat-num">8</div>
-                    <div class="stat-label" data-en="Projects Shipped" data-id="Proyek Diluncurkan">Projects Shipped
-                    </div>
-                </div>
-                <div>
-                    <div class="stat-num">3</div>
-                    <div class="stat-label" data-en="Gov. Institutions" data-id="Instansi Pemerintah">Gov. Institutions
-                    </div>
+                <div class="hero__badge">
+                    <span class="dot-live" aria-hidden="true"></span>
+                    <span data-en="Open to new roles — remote, part-time, or full-time" data-id="Terbuka untuk peran baru — remote, paruh waktu, atau penuh waktu">Open to new roles — remote, part-time, or full-time</span>
                 </div>
             </div>
+            <figure class="code-card" id="code-card">
+                <div class="code-card__head">
+                    <span class="code-card__file mono">GET /v1/developers/greyfikal</span>
+                    <span class="code-card__status">200 OK</span>
+                </div>
+                <pre class="code-card__body"><code>{
+  <span class="tok-key">"name"</span>: <span class="tok-str">"Greyfikal Apriyuda"</span>,
+  <span class="tok-key">"role"</span>: <span class="tok-str">"Backend-focused Software Developer"</span>,
+  <span class="tok-key">"based_in"</span>: <span class="tok-str">"Jakarta, ID (UTC+7)"</span>,
+  <span class="tok-key">"since"</span>: <span class="tok-num">2017</span>,
+  <span class="tok-key">"stack"</span>: [<span class="tok-str">"Laravel"</span>, <span class="tok-str">"Go"</span>, <span class="tok-str">"Next.js"</span>, <span class="tok-str">"PostgreSQL"</span>],
+  <span class="tok-key">"currently"</span>: <span class="tok-str">"Ditjen Perhubungan Udara, Kemenhub"</span>,
+  <span class="tok-key">"status"</span>: <span class="tok-str">"open_to_work"</span><span class="caret" id="hero-caret">▮</span>
+}</code></pre>
+            </figure>
+        </div>
+    </section>
+
+    <!-- STAT STRIP (T4) -->
+    <section class="stat-strip" style="padding-block: 0;">
+        <div class="stat-strip__inner reveal-group">
+            <div><b class="tnum" data-target="8">0</b><span data-en="+ years in production" data-id="+ tahun di lingkungan produksi">+ years in production</span></div>
+            <div><b class="tnum" data-target="11">0</b><span data-en="projects shipped" data-id="proyek diluncurkan">projects shipped</span></div>
+            <div><b class="tnum" data-target="460">0</b><span data-en="users on the largest platform" data-id="pengguna di platform terbesar">users on the largest platform</span></div>
+            <div><b class="tnum" data-target="3">0</b><span data-en="public-sector organisations served" data-id="instansi publik yang dilayani">public-sector organisations served</span></div>
         </div>
     </section>
 
     <!-- ABOUT -->
     <section id="about">
         <div class="section-inner">
-            <div class="section-header reveal">
-                <div class="section-eyebrow" data-en="Who I Am" data-id="Siapa Saya">Who I Am</div>
-                <h2 class="section-title" data-en="About Me" data-id="Tentang Saya">About Me</h2>
+            <div class="section-head reveal">
+                <h2 data-en="About" data-id="Tentang">About</h2>
             </div>
             <div class="about-grid">
-                <div class="reveal">
-                    <div class="about-card">
-                        <div class="about-avatar">GA</div>
-                        <div class="about-meta">
-                            <div class="meta-item">
-                                <div class="meta-label" data-en="Location" data-id="Lokasi">Location</div>
-                                <div class="meta-value">Jakarta, Indonesia</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label" data-en="Timezone" data-id="Zona Waktu">Timezone</div>
-                                <div class="meta-value">GMT+7 (WIB)</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label">Email</div>
-                                <div class="meta-value" style="font-size:0.8rem">greyfikal9@gmail.com</div>
-                            </div>
-                            <div class="meta-item">
-                                <div class="meta-label" data-en="Status" data-id="Status">Status</div>
-                                <div class="meta-value" style="color:#22C55E" data-en="Open to Work"
-                                    data-id="Siap Bekerja">Open to Work</div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="about-lede reveal">
+                    <p data-en="Hands-on production experience since 2017 — system administration first, full-stack development since."
+                        data-id="Pengalaman produksi langsung sejak 2017 — dimulai dari administrasi sistem, berlanjut ke pengembangan full-stack.">
+                        Hands-on production experience since 2017 — system administration first, full-stack development
+                        since.
+                    </p>
                 </div>
-                <div class="about-text reveal" style="transition-delay:0.15s">
-                    <p data-en='Results-driven Software Engineer with over <span class="about-highlight">7 years of experience</span> developing performance-critical applications in production environments, alongside <span class="about-highlight">8+ years as a system administrator</span>.'
-                        data-id='Software Engineer berpengalaman dengan <span class="about-highlight">7+ tahun pengalaman</span> membangun aplikasi kritis di lingkungan produksi, serta <span class="about-highlight">8+ tahun sebagai system administrator</span>.'>
-                        Results-driven Software Engineer with over <span class="about-highlight">7 years of
-                            experience</span> developing performance-critical applications in production environments,
-                        alongside <span class="about-highlight">8+ years as a system administrator</span>.
+                <div class="about-body reveal" style="transition-delay:0.1s">
+                    <p data-en='Builds and maintains multi-tenant government platforms in production, across <span class="hl">Laravel 10 through 13</span> — both traditional Blade/Alpine stacks and modern Inertia.js + React + TypeScript stacks — and leads backend development on a <span class="hl">Go microservices + Next.js</span> member portal deployed via Kubernetes/ArgoCD GitOps.'
+                        data-id='Membangun dan memelihara platform multi-tenant pemerintahan di lingkungan produksi, di rentang <span class="hl">Laravel 10 hingga 13</span> — baik stack Blade/Alpine tradisional maupun stack Inertia.js + React + TypeScript modern — serta memimpin pengembangan backend portal anggota berbasis <span class="hl">Go microservices + Next.js</span> yang dirilis via Kubernetes/ArgoCD GitOps.'>
+                        Builds and maintains multi-tenant government platforms in production, across <span class="hl">Laravel
+                            10 through 13</span> — both traditional Blade/Alpine stacks and modern Inertia.js + React +
+                        TypeScript stacks — and leads backend development on a <span class="hl">Go microservices +
+                            Next.js</span> member portal deployed via Kubernetes/ArgoCD GitOps.
                     </p>
-                    <p data-en='Demonstrated expertise in <span class="about-highlight">leading company-wide projects</span>, setting technical vision, and making architectural decisions. Passionate about software development with a strong commitment to continuous learning.'
-                        data-id='Terbukti mampu <span class="about-highlight">memimpin proyek lintas unit</span>, menetapkan visi teknis, dan mengambil keputusan arsitektural. Bersemangat terhadap pengembangan perangkat lunak dan berkomitmen pada pembelajaran berkelanjutan.'>
-                        Demonstrated expertise in <span class="about-highlight">leading company-wide projects</span>,
-                        setting technical vision, and making architectural decisions. Passionate about software
-                        development with a strong commitment to continuous learning.
-                    </p>
-                    <p data-en='Strong background in RDBMS including <span class="about-highlight">MySQL and SQL Server</span>, NoSQL databases like Redis, and cybersecurity collaboration with BSSN through ITSA assessments.'
-                        data-id='Latar belakang kuat dalam RDBMS termasuk <span class="about-highlight">MySQL dan SQL Server</span>, NoSQL seperti Redis, dan kolaborasi keamanan siber dengan BSSN melalui kegiatan ITSA.'>
-                        Strong background in RDBMS including <span class="about-highlight">MySQL and SQL Server</span>,
-                        NoSQL databases like Redis, and cybersecurity collaboration with BSSN through ITSA assessments.
+                    <p data-en='Experienced integrating third-party SSO (OAuth2, encrypted callbacks), external SOAP/REST APIs, and payment gateways (SIMPONI/BRI) into mission-critical systems, including a state-revenue platform with automated billing and queued payment reconciliation. Strong RDBMS background (<span class="hl">MySQL, PostgreSQL, SQL Server</span>) and a security-conscious approach to backend design — JWT rotation, TOTP/MFA, firewall/WAF administration.'
+                        data-id='Berpengalaman mengintegrasikan SSO pihak ketiga (OAuth2, encrypted callback), SOAP/REST API eksternal, dan payment gateway (SIMPONI/BRI) ke sistem yang kritikal, termasuk platform PNBP negara dengan penagihan otomatis dan rekonsiliasi pembayaran via antrian. Latar belakang RDBMS yang kuat (<span class="hl">MySQL, PostgreSQL, SQL Server</span>) dan pendekatan keamanan pada desain backend — rotasi JWT, TOTP/MFA, administrasi firewall/WAF.'>
+                        Experienced integrating third-party SSO (OAuth2, encrypted callbacks), external SOAP/REST APIs,
+                        and payment gateways (SIMPONI/BRI) into mission-critical systems, including a state-revenue
+                        platform with automated billing and queued payment reconciliation. Strong RDBMS background
+                        (<span class="hl">MySQL, PostgreSQL, SQL Server</span>) and a security-conscious approach to
+                        backend design — JWT rotation, TOTP/MFA, firewall/WAF administration.
                     </p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- SKILLS -->
+    <!-- SKILLS — F3 spec sheet -->
     <section id="skills">
         <div class="section-inner">
-            <div class="section-header reveal">
-                <div class="section-eyebrow" data-en="What I Work With" data-id="Yang Saya Gunakan">What I Work With
-                </div>
-                <h2 class="section-title" data-en="Skills & Technologies" data-id="Keahlian & Teknologi">Skills &
-                    Technologies</h2>
-                <p class="section-subtitle"
-                    data-en="A toolkit built from years of hands-on production experience across government institutions."
+            <div class="section-head reveal">
+                <h2 data-en="Skills &amp; stack" data-id="Keahlian &amp; Stack">Skills &amp; stack</h2>
+                <p class="section-sub" data-en="A toolkit built from years of hands-on production work across government institutions."
                     data-id="Toolkit yang dibangun dari pengalaman produksi bertahun-tahun di berbagai instansi pemerintah.">
-                    A toolkit built from years of hands-on production experience across government institutions.</p>
+                    A toolkit built from years of hands-on production work across government institutions.</p>
             </div>
-            <div class="skills-grid">
-                <div class="skill-category reveal">
-                    <div class="skill-cat-title"><span class="skill-cat-icon">💻</span><span data-en="Languages"
-                            data-id="Bahasa Pemrograman">Languages</span></div>
-                    <div class="skill-tags">
-                        <span class="skill-tag highlight">PHP</span>
-                        <span class="skill-tag highlight">Python</span>
-                        <span class="skill-tag highlight">JavaScript</span>
-                        <span class="skill-tag">HTML</span>
-                        <span class="skill-tag">CSS</span>
-                        <span class="skill-tag">SQL</span>
-                    </div>
+            <dl class="spec-sheet reveal">
+                <div class="spec-row">
+                    <dt>Backend</dt>
+                    <dd>Laravel 10–13 (multi-tenant architecture) · Go (Gorilla Mux microservices) · CodeIgniter · Flask (Python)</dd>
                 </div>
-                <div class="skill-category reveal" style="transition-delay:0.1s">
-                    <div class="skill-cat-title"><span class="skill-cat-icon">🚀</span><span data-en="Frameworks"
-                            data-id="Framework">Frameworks</span></div>
-                    <div class="skill-tags">
-                        <span class="skill-tag highlight">Laravel</span>
-                        <span class="skill-tag highlight">CodeIgniter</span>
-                        <span class="skill-tag highlight">Flask</span>
-                        <span class="skill-tag">Bootstrap</span>
-                        <span class="skill-tag">Tailwind CSS</span>
-                        <span class="skill-tag">jQuery</span>
-                    </div>
+                <div class="spec-row">
+                    <dt>Frontend</dt>
+                    <dd>Inertia.js + React 19 + TypeScript · Next.js 16 (App Router) · Blade + Alpine.js · Vue 2.7 · Tailwind CSS 4 · Bootstrap 5</dd>
                 </div>
-                <div class="skill-category reveal" style="transition-delay:0.2s">
-                    <div class="skill-cat-title"><span class="skill-cat-icon">🗄️</span><span data-en="Databases"
-                            data-id="Basis Data">Databases</span></div>
-                    <div class="skill-tags">
-                        <span class="skill-tag highlight">MySQL</span>
-                        <span class="skill-tag highlight">SQL Server</span>
-                        <span class="skill-tag">Oracle</span>
-                        <span class="skill-tag">Redis</span>
-                        <span class="skill-tag">MariaDB</span>
-                    </div>
+                <div class="spec-row">
+                    <dt>Auth</dt>
+                    <dd>Laravel Sanctum · Laravel Fortify (2FA) · spatie/laravel-permission (RBAC) · JWT with rotation/revocation · TOTP/MFA · custom OAuth2 SSO with AES-256-CBC encrypted callbacks</dd>
                 </div>
-                <div class="skill-category reveal" style="transition-delay:0.3s">
-                    <div class="skill-cat-title"><span class="skill-cat-icon">🛡️</span><span data-en="Security & Infra"
-                            data-id="Keamanan & Infrastruktur">Security & Infra</span></div>
-                    <div class="skill-tags">
-                        <span class="skill-tag highlight">Nginx</span>
-                        <span class="skill-tag highlight">Linux</span>
-                        <span class="skill-tag">Fortigate</span>
-                        <span class="skill-tag">Barracuda WAF</span>
-                        <span class="skill-tag">BSSN ITSA</span>
-                        <span class="skill-tag">Windows Server</span>
-                    </div>
+                <div class="spec-row">
+                    <dt>Integration</dt>
+                    <dd>SOAP/ESB (SIMPONI–BRI payment gateway) · REST API consumption · Laravel Queues &amp; Task Scheduling · Go cron (gocron)</dd>
                 </div>
-                <div class="skill-category reveal" style="transition-delay:0.4s">
-                    <div class="skill-cat-title"><span class="skill-cat-icon">🛠️</span><span
-                            data-en="Tools & Practices" data-id="Alat & Praktik">Tools & Practices</span></div>
-                    <div class="skill-tags">
-                        <span class="skill-tag highlight">Git</span>
-                        <span class="skill-tag">SOLID</span>
-                        <span class="skill-tag">DRY</span>
-                        <span class="skill-tag">System Design</span>
-                        <span class="skill-tag">Data Processing</span>
-                    </div>
+                <div class="spec-row">
+                    <dt>Data</dt>
+                    <dd>MySQL · PostgreSQL · SQL Server · Oracle · Redis · MinIO object storage · yajra DataTables · Maatwebsite Excel · barryvdh DOMPDF · Chart.js</dd>
                 </div>
-                <div class="skill-category reveal" style="transition-delay:0.5s">
-                    <div class="skill-cat-title"><span class="skill-cat-icon">🌐</span><span data-en="OS Environments"
-                            data-id="Lingkungan OS">OS Environments</span></div>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Ubuntu</span>
-                        <span class="skill-tag">Debian</span>
-                        <span class="skill-tag">CentOS</span>
-                        <span class="skill-tag">Arch Linux</span>
-                        <span class="skill-tag">Windows Server</span>
-                    </div>
+                <div class="spec-row">
+                    <dt>DevOps</dt>
+                    <dd>GitLab CI/CD (Kaniko builds) · GitHub Actions · Kubernetes + ArgoCD (GitOps) · Docker · Nginx · Windows Server · Linux (Ubuntu, Debian, Arch, CentOS)</dd>
                 </div>
-            </div>
+            </dl>
         </div>
     </section>
 
-    <!-- EXPERIENCE -->
-    <section id="experience">
+    <!-- EXPERIENCE — dark graphite band, changelog -->
+    <section id="experience" class="band-dark">
         <div class="section-inner">
-            <div class="section-header reveal">
-                <div class="section-eyebrow" data-en="My Journey" data-id="Perjalanan Saya">My Journey</div>
-                <h2 class="section-title" data-en="Work Experience" data-id="Pengalaman Kerja">Work Experience</h2>
+            <div class="section-head reveal">
+                <h2 data-en="Experience" data-id="Pengalaman">Experience</h2>
+                <p class="section-sub" data-en="A changelog of roles, most recent first." data-id="Rekam jejak peran, dari yang terbaru.">A changelog of roles, most recent first.</p>
             </div>
-            <div class="timeline">
-                <div class="timeline-item reveal">
-                    <div class="timeline-dot">
-                        <div class="timeline-dot-inner"></div>
+            <ol class="changelog reveal-group">
+                <li class="changelog__entry">
+                    <div class="changelog__meta">
+                        <span class="changelog__tag mono">2025.06 →</span>
+                        <span class="changelog__status">current</span>
                     </div>
-                    <div class="timeline-card">
-                        <div class="timeline-period">June 2025 — Present</div>
-                        <div class="timeline-role" data-en="Pengadministrasi Perkantoran"
-                            data-id="Pengadministrasi Perkantoran">Pengadministrasi Perkantoran</div>
-                        <div class="timeline-company">Bagian Organisasi & Tata Laksana — Ditjen Perhubungan Udara,
-                            Kemenhub</div>
-                        <ul class="timeline-bullets">
-                            <li data-en="Developed an FAQ system to help leadership map frequently asked questions across units."
-                                data-id="Mengembangkan sistem FAQ untuk membantu pimpinan memetakan pertanyaan yang sering diajukan.">
-                                Developed an FAQ system to help leadership map frequently asked questions across units.
-                            </li>
-                            <li data-en="Built a microsite system for every airport authority under Directorate General Civil Aviation."
-                                data-id="Membangun sistem microsite untuk setiap otoritas bandara di bawah Ditjen Perhubungan Udara.">
-                                Built a microsite system for every airport authority under Directorate General Civil
-                                Aviation.</li>
-                            <li data-en="Developed a publication system website for Balai Teknik Penerbangan."
-                                data-id="Mengembangkan website sistem publikasi untuk Balai Teknik Penerbangan.">
-                                Developed a publication system website for Balai Teknik Penerbangan.</li>
+                    <div class="changelog__body">
+                        <h3 data-en="Fullstack Developer" data-id="Fullstack Developer">Fullstack Developer<span class="changelog__org">Bagian Organisasi dan Tata Laksana — Ditjen Perhubungan Udara, Kementerian Perhubungan</span></h3>
+                        <ul>
+                            <li data-en="Built the ICAP FAQ platform (Laravel 12 + Sanctum) modeling per-department ownership via a maintainer-status pivot with answer-reuse logic, plus a JSON-diff change-request/approval pipeline — 77 active departmental users, 12 models, 125 routes."
+                                data-id="Membangun platform FAQ ICAP (Laravel 12 + Sanctum) dengan model kepemilikan per-departemen via pivot maintainer-status dan logika penggunaan-ulang jawaban, ditambah alur permintaan-perubahan/persetujuan berbasis JSON-diff — 77 pengguna departemen aktif, 12 model, 125 route.">
+                                Built the ICAP FAQ platform (Laravel 12 + Sanctum) modeling per-department ownership via a
+                                maintainer-status pivot with answer-reuse logic, plus a JSON-diff change-request/approval
+                                pipeline — 77 active departmental users, 12 models, 125 routes.</li>
+                            <li data-en="Developed the Balai Teknik Penerbangan portal on Laravel 13 + Inertia.js + React 19 + TypeScript, with dual SSO (ICAP OAuth2 + Fortify 2FA fallback) and role/impersonation across Hubud/Btp/System scopes."
+                                data-id="Mengembangkan portal Balai Teknik Penerbangan di Laravel 13 + Inertia.js + React 19 + TypeScript, dengan dual SSO (ICAP OAuth2 + fallback Fortify 2FA) dan role/impersonation lintas scope Hubud/Btp/System.">
+                                Developed the Balai Teknik Penerbangan portal on Laravel 13 + Inertia.js + React 19 +
+                                TypeScript, with dual SSO (ICAP OAuth2 + Fortify 2FA fallback) and role/impersonation
+                                across Hubud/Btp/System scopes.</li>
+                            <li data-en="Own 72 migrations / 52 models / 49 controllers on the BTP codebase, including a 17-model PPID module and activity-audit logging via spatie/laravel-activitylog."
+                                data-id="Memiliki 72 migration / 52 model / 49 controller di codebase BTP, termasuk modul PPID 17-model dan activity-audit logging via spatie/laravel-activitylog.">
+                                Own 72 migrations / 52 models / 49 controllers on the BTP codebase, including a 17-model
+                                PPID module and activity-audit logging via spatie/laravel-activitylog.</li>
+                            <li data-en="Building core billing modules for ICARES, an internal PNBP platform for DJPU's Finance Bureau — SIMPONI (BRI) payment-gateway integration via SOAP/ESB, queued jobs with a per-minute scheduled status sync, and PDF/QR invoice generation ahead of go-live (64 migrations, 54 models)."
+                                data-id="Membangun modul billing inti untuk ICARES, platform PNBP internal Biro Keuangan DJPU — integrasi payment gateway SIMPONI (BRI) via SOAP/ESB, queued job dengan sinkronisasi status terjadwal per menit, dan pembuatan invoice PDF/QR menjelang go-live (64 migration, 54 model).">
+                                Building core billing modules for ICARES, an internal PNBP platform for DJPU's Finance
+                                Bureau — SIMPONI (BRI) payment-gateway integration via SOAP/ESB, queued jobs with a
+                                per-minute scheduled status sync, and PDF/QR invoice generation ahead of go-live (64
+                                migrations, 54 models).</li>
+                            <li data-en="Leading development of PLD, a Go microservices + Next.js/TypeScript member portal (3 services: user, integration, scheduler) — JWT auth with rotation/revocation, TOTP/MFA with device-trust risk tracking, and a multi-step service-access approval workflow; deployed via Docker/Kubernetes with GitLab CI/Kaniko and ArgoCD GitOps (~84 routes, PostgreSQL, MinIO)."
+                                data-id="Memimpin pengembangan PLD, portal anggota Go microservices + Next.js/TypeScript (3 layanan: user, integration, scheduler) — autentikasi JWT dengan rotation/revocation, TOTP/MFA dengan device-trust risk tracking, dan alur persetujuan akses layanan bertahap; dirilis via Docker/Kubernetes dengan GitLab CI/Kaniko dan ArgoCD GitOps (~84 route, PostgreSQL, MinIO).">
+                                Leading development of PLD, a Go microservices + Next.js/TypeScript member portal (3
+                                services: user, integration, scheduler) — JWT auth with rotation/revocation, TOTP/MFA
+                                with device-trust risk tracking, and a multi-step service-access approval workflow;
+                                deployed via Docker/Kubernetes with GitLab CI/Kaniko and ArgoCD GitOps (~84 routes,
+                                PostgreSQL, MinIO).</li>
                         </ul>
                     </div>
-                </div>
-                <div class="timeline-item reveal" style="transition-delay:0.1s">
-                    <div class="timeline-dot">
-                        <div class="timeline-dot-inner"></div>
+                </li>
+                <li class="changelog__entry">
+                    <div class="changelog__meta">
+                        <span class="changelog__tag mono">2024.12 – 2025.05</span>
                     </div>
-                    <div class="timeline-card">
-                        <div class="timeline-period">December 2024 — May 2025</div>
-                        <div class="timeline-role">Pengadministrasi Perkantoran</div>
-                        <div class="timeline-company">Bagian Perencanaan — Ditjen Perhubungan Udara, Kemenhub</div>
-                        <ul class="timeline-bullets">
-                            <li data-en="Developed a microsite system for every airport under DGCA to streamline documentation and publication activities."
-                                data-id="Mengembangkan sistem microsite untuk setiap bandara di bawah DGCA guna memudahkan dokumentasi dan publikasi.">
-                                Developed a microsite system for every airport under DGCA to streamline documentation
-                                and publication activities.</li>
+                    <div class="changelog__body">
+                        <h3>Fullstack Developer<span class="changelog__org">Bagian Perencanaan — Ditjen Perhubungan Udara, Kementerian Perhubungan</span></h3>
+                        <ul>
+                            <li data-en="Built Microsite UPBU, a multi-tenant Laravel 12 platform serving 191 airports under DJPU from one codebase (slug-based tenancy, 3-tier access with super-admin impersonation) — 460 active users, 98 migrations, 72 models, 325 routes."
+                                data-id="Membangun Microsite UPBU, platform multi-tenant Laravel 12 yang melayani 191 bandara di bawah DJPU dari satu codebase (tenancy berbasis slug, akses 3-tingkat dengan impersonation super-admin) — 460 pengguna aktif, 98 migration, 72 model, 325 route.">
+                                Built Microsite UPBU, a multi-tenant Laravel 12 platform serving 191 airports under DJPU
+                                from one codebase (slug-based tenancy, 3-tier access with super-admin impersonation) —
+                                460 active users, 98 migrations, 72 models, 325 routes.</li>
+                            <li data-en="Automated flight-schedule/airline/aircraft-type sync against Kemenhub's Hubud API, PDF/Excel export, XML sitemap generation, and a rate-limited public PPID/complaint module."
+                                data-id="Mengotomasi sinkronisasi jadwal penerbangan/maskapai/tipe pesawat terhadap Hubud API milik Kemenhub, ekspor PDF/Excel, pembuatan XML sitemap, dan modul PPID/pengaduan publik dengan rate-limit.">
+                                Automated flight-schedule/airline/aircraft-type sync against Kemenhub's Hubud API,
+                                PDF/Excel export, XML sitemap generation, and a rate-limited public PPID/complaint
+                                module.</li>
+                            <li data-en="Extended the same multi-tenant pattern to Microsite OBU: granular RBAC (spatie/laravel-permission), OAuth2 SSO with encrypted callbacks, a custom cache-invalidation layer, and a GitLab CI/CD deploy pipeline."
+                                data-id="Memperluas pola multi-tenant yang sama ke Microsite OBU: RBAC granular (spatie/laravel-permission), OAuth2 SSO dengan encrypted callback, custom cache-invalidation layer, dan pipeline deploy GitLab CI/CD.">
+                                Extended the same multi-tenant pattern to Microsite OBU: granular RBAC
+                                (spatie/laravel-permission), OAuth2 SSO with encrypted callbacks, a custom
+                                cache-invalidation layer, and a GitLab CI/CD deploy pipeline.</li>
                         </ul>
                     </div>
-                </div>
-                <div class="timeline-item reveal" style="transition-delay:0.15s">
-                    <div class="timeline-dot">
-                        <div class="timeline-dot-inner"></div>
+                </li>
+                <li class="changelog__entry">
+                    <div class="changelog__meta">
+                        <span class="changelog__tag mono">2022.03 – 2024.11</span>
                     </div>
-                    <div class="timeline-card">
-                        <div class="timeline-period">March 2022 — November 2024</div>
-                        <div class="timeline-role" data-en="Basic Aviation Security Officer"
-                            data-id="Petugas Basic Aviation Security">Basic Aviation Security Officer</div>
-                        <div class="timeline-company">UPBU Dewadaru — Ditjen Perhubungan Udara, Kemenhub</div>
+                    <div class="changelog__body">
+                        <h3 data-en="Basic Aviation Security Officer" data-id="Petugas Basic Aviation Security">Basic Aviation Security Officer<span class="changelog__org">UPBU Dewadaru — Ditjen Perhubungan Udara, Kementerian Perhubungan</span></h3>
                     </div>
-                </div>
-                <div class="timeline-item reveal" style="transition-delay:0.2s">
-                    <div class="timeline-dot">
-                        <div class="timeline-dot-inner"></div>
+                </li>
+                <li class="changelog__entry">
+                    <div class="changelog__meta">
+                        <span class="changelog__tag mono">2017.09 – 2022.03</span>
                     </div>
-                    <div class="timeline-card">
-                        <div class="timeline-period">September 2017 — March 2022</div>
-                        <div class="timeline-role" data-en="IT Staff" data-id="Staf IT">IT Staff</div>
-                        <div class="timeline-company">Sub Bagian Perencanaan — Dinas Pendidikan Kab. Gunungkidul, Pemkab
-                            Gunungkidul</div>
-                        <ul class="timeline-bullets">
-                            <li data-en="Installed and maintained office network infrastructure for stable and secure connectivity."
-                                data-id="Memasang dan memelihara infrastruktur jaringan kantor untuk konektivitas yang stabil dan aman.">
-                                Installed and maintained office network infrastructure for stable and secure
-                                connectivity.</li>
-                            <li data-en="Managed and maintained server computers including essential server software and services."
-                                data-id="Mengelola dan memelihara komputer server termasuk perangkat lunak server esensial.">
-                                Managed and maintained server computers including essential server software and
-                                services.</li>
-                            <li data-en="Developed integration systems for the Dapodik (Education Data Backbone) database from the Ministry of Education."
-                                data-id="Mengembangkan sistem integrasi untuk basis data Dapodik dari Kemdikbudristek untuk Kab. Gunungkidul.">
-                                Developed integration systems for the <strong>Dapodik</strong> database from the
-                                Ministry of Education.</li>
-                            <li data-en="Monitored network traffic at Layer 3 and Layer 7 using Fortigate Firewall and Barracuda WAF."
-                                data-id="Memantau lalu lintas jaringan di Layer 3 dan Layer 7 menggunakan Fortigate Firewall dan Barracuda WAF.">
-                                Monitored network traffic at Layer 3/7 using <strong>Fortigate Firewall</strong> and
-                                <strong>Barracuda WAF</strong>.
-                            </li>
-                            <li data-en="Executed cybersecurity hardening in collaboration with BSSN through ITSA activities including post-assessment remediations."
-                                data-id="Melaksanakan penguatan keamanan siber bersama BSSN melalui kegiatan ITSA termasuk remediasi pasca-asesmen.">
-                                Executed cybersecurity hardening with <strong>BSSN</strong> through ITSA activities
-                                including post-assessment remediations.</li>
+                    <div class="changelog__body">
+                        <h3 data-en="IT Staff" data-id="Staf IT">IT Staff<span class="changelog__org">Sub Bagian Perencanaan — Dinas Pendidikan Kab. Gunungkidul, Pemkab Gunungkidul</span></h3>
+                        <ul>
+                            <li data-en="Installed and maintained office internet network infrastructure and configuration for stable, secure connectivity; managed server computers including deployment and upkeep of essential server software and services."
+                                data-id="Memasang dan memelihara infrastruktur serta konfigurasi jaringan internet kantor untuk konektivitas yang stabil dan aman; mengelola komputer server termasuk deployment dan pemeliharaan perangkat lunak server esensial.">
+                                Installed and maintained office internet network infrastructure and configuration for
+                                stable, secure connectivity; managed server computers including deployment and upkeep of
+                                essential server software and services.</li>
+                            <li data-en="Developed integration systems for the Dapodik (Education Data Backbone) database sourced from the Ministry of Education, Culture, Research, and Technology, for Gunungkidul Regency."
+                                data-id="Mengembangkan sistem integrasi untuk basis data Dapodik (Data Pokok Pendidikan) dari Kemdikbudristek, untuk Kabupaten Gunungkidul.">
+                                Developed integration systems for the Dapodik (Education Data Backbone) database
+                                sourced from the Ministry of Education, Culture, Research, and Technology, for
+                                Gunungkidul Regency.</li>
+                            <li data-en="Monitored network traffic at Layer 3 and Layer 7 using Fortigate Firewall and Barracuda WAF; executed cybersecurity hardening with BSSN through ITSA activities, including post-assessment remediations and backup/data-mitigation strategies."
+                                data-id="Memantau lalu lintas jaringan pada Layer 3 dan Layer 7 menggunakan Fortigate Firewall dan Barracuda WAF; melaksanakan penguatan keamanan siber bersama BSSN melalui kegiatan ITSA, termasuk remediasi pasca-asesmen dan strategi backup/mitigasi data.">
+                                Monitored network traffic at Layer 3 and Layer 7 using Fortigate Firewall and Barracuda
+                                WAF; executed cybersecurity hardening with BSSN through ITSA activities, including
+                                post-assessment remediations and backup/data-mitigation strategies.</li>
                         </ul>
                     </div>
-                </div>
-            </div>
+                </li>
+            </ol>
         </div>
     </section>
 
     <!-- EDUCATION -->
     <section id="education">
         <div class="section-inner">
-            <div class="section-header reveal">
-                <div class="section-eyebrow" data-en="Academic Background" data-id="Latar Belakang Akademik">Academic
-                    Background</div>
-                <h2 class="section-title" data-en="Education" data-id="Pendidikan">Education</h2>
+            <div class="section-head reveal">
+                <h2 data-en="Education" data-id="Pendidikan">Education</h2>
             </div>
-            <div class="edu-grid">
-                <div class="edu-card reveal">
-                    <div class="edu-degree" data-en="Undergraduate — Informatics" data-id="S1 — Informatika">
-                        Undergraduate — Informatics</div>
-                    <div class="edu-school">Universitas Siber Asia</div>
-                    <div class="edu-period">October 2025 — Present</div>
-                    <div class="edu-note"
-                        data-en="Continuing undergraduate studies with ongoing focus on software development and computing systems."
-                        data-id="Melanjutkan studi S1 dengan fokus pada pengembangan perangkat lunak dan sistem komputasi.">
-                        Continuing undergraduate studies with ongoing focus on software development and computing
-                        systems.</div>
+            <dl class="spec-sheet reveal">
+                <div class="spec-row">
+                    <dt>2025 — present</dt>
+                    <dd>
+                        Universitas Siber Asia — Undergraduate Informatics
+                        <span class="muted" data-en="Continuing undergraduate studies after prior academic experience at Universitas Mercu Buana Yogyakarta, with ongoing focus on software development and computing systems."
+                            data-id="Melanjutkan studi S1 setelah sebelumnya menempuh pendidikan di Universitas Mercu Buana Yogyakarta, dengan fokus berkelanjutan pada pengembangan perangkat lunak dan sistem komputasi.">
+                            Continuing undergraduate studies after prior academic experience at Universitas Mercu Buana
+                            Yogyakarta, with ongoing focus on software development and computing systems.</span>
+                    </dd>
                 </div>
-                <div class="edu-card reveal" style="transition-delay:0.1s">
-                    <div class="edu-degree" data-en="Undergraduate — Informatics" data-id="S1 — Informatika">
-                        Undergraduate — Informatics</div>
-                    <div class="edu-school">Universitas Mercu Buana Yogyakarta</div>
-                    <div class="edu-period">August 2019 — March 2022</div>
-                    <div class="edu-note"
-                        data-en="Heavy focus on web development with modules covering both frontend and backend. Relevant coursework: OS Architecture, Linux/Unix Programming, Web Development, Relational Database Design, Java Programming, Data Engineering."
-                        data-id="Fokus penuh pada web development dengan modul frontend dan backend. Mata kuliah relevan: Arsitektur OS, Pemrograman Linux/Unix, Pengembangan Web, Desain Database Relasional, Pemrograman Java, Data Engineering.">
-                        Heavy focus on web development. Coursework: OS Architecture, Linux/Unix Programming, Web Dev,
-                        Database Design, Java, Data Engineering.</div>
+                <div class="spec-row">
+                    <dt>2019 — 2022</dt>
+                    <dd>
+                        Universitas Mercu Buana Yogyakarta — Undergraduate Informatics
+                        <span class="muted" data-en="Coursework completed; degree not finished. Left in March 2022 to take up a civil-service posting at UPBU Dewadaru, Jepara Regency — continuing weekend on-campus coursework in Yogyakarta was no longer practical after relocating. Coursework: OS Architecture, Linux/Unix Programming, Web Page Development, Relational Database Design &amp; SQL, Java Programming, Data Engineering."
+                            data-id="Perkuliahan selesai; gelar belum ditempuh. Berhenti pada Maret 2022 untuk mengambil penempatan PNS di UPBU Dewadaru, Kabupaten Jepara — melanjutkan kuliah akhir pekan di Yogyakarta tidak lagi memungkinkan setelah pindah. Mata kuliah: Arsitektur Sistem Operasi, Pemrograman Linux/Unix, Pengembangan Halaman Web, Desain Basis Data Relasional &amp; SQL, Pemrograman Java, Data Engineering.">
+                            Coursework completed; degree not finished. Left in March 2022 to take up a civil-service
+                            posting at UPBU Dewadaru, Jepara Regency — continuing weekend on-campus coursework in
+                            Yogyakarta was no longer practical after relocating. Coursework: OS Architecture, Linux/Unix
+                            Programming, Web Page Development, Relational Database Design &amp; SQL, Java Programming,
+                            Data Engineering.</span>
+                    </dd>
                 </div>
-            </div>
+            </dl>
         </div>
     </section>
 
-    <!-- PROJECTS -->
-    <section id="projects" style="background:var(--bg2)">
+    <!-- PROJECTS — F6 product card grid -->
+    <section id="projects">
         <div class="section-inner">
-            <div class="section-header reveal">
-                <div class="section-eyebrow" data-en="What I've Built" data-id="Yang Telah Saya Bangun">What I've Built
-                </div>
-                <h2 class="section-title" data-en="Projects" data-id="Proyek">Projects</h2>
-                <p class="section-subtitle"
-                    data-en="Production systems serving government institutions across Indonesia."
-                    data-id="Sistem produksi yang melayani instansi pemerintah di seluruh Indonesia.">Production systems
-                    serving government institutions across Indonesia.</p>
+            <div class="section-head reveal">
+                <h2 data-en="Projects" data-id="Proyek">Projects</h2>
+                <p class="section-sub" data-en="Eleven systems, three organisations, 2017 — 2026."
+                    data-id="Sebelas sistem, tiga instansi, 2017 — 2026.">Eleven systems, three organisations, 2017 — 2026.</p>
             </div>
-            <div class="projects-grid">
+            <div class="project-grid reveal-group">
 
-                <div class="project-card reveal">
-                    <div class="project-company">Kementerian Perhubungan</div>
-                    <div class="project-name">Frequently Asked Questions System</div>
-                    <div class="project-desc"
-                        data-en="Web-based FAQ system with CRUD management, keyword search, user authentication, and admin dashboard. Questions are separated by responsible party."
-                        data-id="Sistem FAQ berbasis web dengan manajemen CRUD, pencarian kata kunci, autentikasi pengguna, dan dasbor admin. Pertanyaan dipisahkan berdasarkan pihak penanggung jawab.">
-                        Web-based FAQ system with CRUD management, keyword search, user auth, and admin dashboard.</div>
-                    <div class="project-tech">
-                        <span class="tech-badge">Laravel</span><span class="tech-badge">Bootstrap</span><span
-                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
-                    </div>
-                    <a href="https://icap.kemenhub.go.id/faq/" class="project-link" target="_blank" rel="noopener">
-                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M7 17L17 7M7 7h10v10" />
-                        </svg>
-                    </a>
-                </div>
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Kementerian Perhubungan</span><span class="project__year">2025</span></div>
+                    <h3 class="project__name">Balai Teknik Penerbangan Portal</h3>
+                    <p class="project__desc" data-en="Public + admin portal with dual SSO (ICAP OAuth2 + Fortify 2FA), role-based impersonation, a 17-model PPID transparency module, and activity-audit logging."
+                        data-id="Portal publik + admin dengan dual SSO (ICAP OAuth2 + Fortify 2FA), impersonation berbasis role, modul transparansi PPID 17-model, dan activity-audit logging.">
+                        Public + admin portal with dual SSO (ICAP OAuth2 + Fortify 2FA), role-based impersonation, a
+                        17-model PPID transparency module, and activity-audit logging.</p>
+                    <div class="project__tags"><span>Laravel 13</span><span>Inertia.js</span><span>React 19</span><span>TypeScript</span></div>
+                    <span class="project__status">Ongoing · internal</span>
+                </article>
 
-                <div class="project-card reveal" style="transition-delay:0.05s">
-                    <div class="project-company">Kementerian Perhubungan</div>
-                    <div class="project-name">Microsite OBU — Airport Authorities</div>
-                    <div class="project-desc"
-                        data-en="Microsite and publication system for every airport authority under Directorate General Civil Aviation."
-                        data-id="Sistem microsite dan publikasi untuk setiap otoritas bandara di bawah Ditjen Perhubungan Udara.">
-                        Microsite and publication system for every airport authority under Directorate General Civil
-                        Aviation.</div>
-                    <div class="project-tech">
-                        <span class="tech-badge">Laravel</span><span class="tech-badge">Tailwind CSS</span><span
-                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
-                    </div>
-                    <a href="https://hubud.kemenhub.go.id/obu/" class="project-link" target="_blank" rel="noopener">
-                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M7 17L17 7M7 7h10v10" />
-                        </svg>
-                    </a>
-                </div>
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Kementerian Perhubungan</span><span class="project__year">2026</span></div>
+                    <h3 class="project__name">ICARES — Sistem PNBP</h3>
+                    <p class="project__desc" data-en="Internal non-tax state revenue system for DJPU's Finance Bureau — SIMPONI (BRI) gateway via SOAP/ESB, queued jobs, per-minute status sync, and PDF/QR invoicing."
+                        data-id="Sistem PNBP internal untuk Biro Keuangan DJPU — gateway SIMPONI (BRI) via SOAP/ESB, queued job, sinkronisasi status per menit, dan invoicing PDF/QR.">
+                        Internal non-tax state revenue system for DJPU's Finance Bureau — SIMPONI (BRI) gateway via
+                        SOAP/ESB, queued jobs, per-minute status sync, and PDF/QR invoicing.</p>
+                    <div class="project__tags"><span>Laravel</span><span>SOAP/ESB</span><span>MySQL</span><span>yajra</span></div>
+                    <span class="project__status">In development · internal</span>
+                </article>
 
-                <div class="project-card reveal" style="transition-delay:0.1s">
-                    <div class="project-company">Kementerian Perhubungan</div>
-                    <div class="project-name">Microsite UPBU — Airports</div>
-                    <div class="project-desc"
-                        data-en="Microsite and publication system for every airport under Directorate General Civil Aviation, Kemenhub."
-                        data-id="Sistem microsite dan publikasi untuk setiap bandara di bawah Ditjen Perhubungan Udara, Kemenhub.">
-                        Microsite and publication system for every airport under Directorate General Civil Aviation,
-                        Kemenhub.</div>
-                    <div class="project-tech">
-                        <span class="tech-badge">Laravel</span><span class="tech-badge">Bootstrap</span><span
-                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
-                    </div>
-                    <a href="https://hubud.kemenhub.go.id/upbu/" class="project-link" target="_blank" rel="noopener">
-                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M7 17L17 7M7 7h10v10" />
-                        </svg>
-                    </a>
-                </div>
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Kementerian Perhubungan</span><span class="project__year">2026</span></div>
+                    <h3 class="project__name">PLD — Ortala Member Portal</h3>
+                    <p class="project__desc" data-en="Go microservices (user, integration, scheduler) behind a Next.js backoffice — JWT auth with rotation, TOTP/MFA, and a multi-step access-approval workflow; deployed via Kubernetes/ArgoCD."
+                        data-id="Go microservices (user, integration, scheduler) di balik backoffice Next.js — autentikasi JWT dengan rotasi, TOTP/MFA, dan alur persetujuan akses bertahap; dirilis via Kubernetes/ArgoCD.">
+                        Go microservices (user, integration, scheduler) behind a Next.js backoffice — JWT auth with
+                        rotation, TOTP/MFA, and a multi-step access-approval workflow; deployed via Kubernetes/ArgoCD.</p>
+                    <div class="project__tags"><span>Go</span><span>Next.js</span><span>PostgreSQL</span><span>K8s</span></div>
+                    <span class="project__status">Lead backend · internal</span>
+                </article>
 
-                <div class="project-card reveal" style="transition-delay:0.15s">
-                    <div class="project-company">Kementerian Perhubungan</div>
-                    <div class="project-name">Balai Teknik Penerbangan Website</div>
-                    <div class="project-desc"
-                        data-en="Publication website for Balai Teknik Penerbangan with content management, admin panel, and public-facing pages."
-                        data-id="Website publikasi untuk Balai Teknik Penerbangan dengan manajemen konten, panel admin, dan halaman publik.">
-                        Publication website for Balai Teknik Penerbangan with CMS, admin panel, and public-facing pages.
-                    </div>
-                    <div class="project-tech">
-                        <span class="tech-badge">Laravel</span><span class="tech-badge">Tailwind CSS</span><span
-                            class="tech-badge">JavaScript</span><span class="tech-badge">MariaDB</span>
-                    </div>
-                    <a href="https://hubud.kemenhub.go.id/btp/" class="project-link" target="_blank" rel="noopener">
-                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M7 17L17 7M7 7h10v10" />
-                        </svg>
-                    </a>
-                </div>
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Kementerian Perhubungan</span><span class="project__year">2025</span></div>
+                    <h3 class="project__name">Frequently Asked Questions (ICAP)</h3>
+                    <p class="project__desc" data-en="FAQ platform for 77 active users with per-department ownership, answer-reuse logic, a JSON-diff change-request/approval workflow, and two-step Excel import/export."
+                        data-id="Platform FAQ untuk 77 pengguna aktif dengan kepemilikan per-departemen, logika penggunaan-ulang jawaban, alur persetujuan berbasis JSON-diff, dan impor/ekspor Excel dua tahap.">
+                        FAQ platform for 77 active users with per-department ownership, answer-reuse logic, a
+                        JSON-diff change-request/approval workflow, and two-step Excel import/export.</p>
+                    <div class="project__tags"><span>Laravel 12</span><span>Sanctum</span><span>MySQL</span></div>
+                    <a class="link" href="https://icap.kemenhub.go.id/faq/" target="_blank" rel="noopener">View site →</a>
+                </article>
 
-                <div class="project-card reveal" style="transition-delay:0.2s">
-                    <div class="project-company">Dinas Pendidikan Kab. Gunungkidul</div>
-                    <div class="project-name">School Website Monitoring System</div>
-                    <div class="project-desc"
-                        data-en="Microsite and publication system for every school under Dinas Pendidikan Kab. Gunungkidul."
-                        data-id="Sistem microsite dan publikasi untuk setiap sekolah di bawah Dinas Pendidikan Kab. Gunungkidul.">
-                        Microsite and publication system for every school under Dinas Pendidikan Kab. Gunungkidul.</div>
-                    <div class="project-tech">
-                        <span class="tech-badge">CodeIgniter</span><span class="tech-badge">Bootstrap</span><span
-                            class="tech-badge">JavaScript</span><span class="tech-badge">SQL Server</span>
-                    </div>
-                    <a href="https://monitorweb.pendidikan.gunungkidulkab.go.id/" class="project-link" target="_blank"
-                        rel="noopener">
-                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M7 17L17 7M7 7h10v10" />
-                        </svg>
-                    </a>
-                </div>
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Kementerian Perhubungan</span><span class="project__year">2025</span></div>
+                    <h3 class="project__name">Microsite UPBU</h3>
+                    <p class="project__desc" data-en="Multi-tenant publication platform serving 191 airports under DJPU from a single codebase — 460 active users, flight-data sync, PPID/complaint modules, PDF/Excel export."
+                        data-id="Platform publikasi multi-tenant yang melayani 191 bandara di bawah DJPU dari satu codebase — 460 pengguna aktif, sinkronisasi data penerbangan, modul PPID/pengaduan, ekspor PDF/Excel.">
+                        Multi-tenant publication platform serving 191 airports under DJPU from a single codebase — 460
+                        active users, flight-data sync, PPID/complaint modules, PDF/Excel export.</p>
+                    <div class="project__tags"><span>Laravel 12</span><span>Vue</span><span>Tailwind</span><span>MySQL</span></div>
+                    <a class="link" href="https://hubud.kemenhub.go.id/upbu/" target="_blank" rel="noopener">View site →</a>
+                </article>
 
-                <div class="project-card reveal" style="transition-delay:0.25s">
-                    <div class="project-company">Dinas Pendidikan Kab. Gunungkidul</div>
-                    <div class="project-name">BOS Fund Tax Reporting System</div>
-                    <div class="project-desc"
-                        data-en="Bantuan Operasional Sekolah fund tax reporting system used by schools across the regency."
-                        data-id="Sistem pelaporan pajak dana Bantuan Operasional Sekolah yang digunakan sekolah-sekolah se-kabupaten.">
-                        Bantuan Operasional Sekolah fund tax reporting system used by schools across the regency.</div>
-                    <div class="project-tech">
-                        <span class="tech-badge">Laravel</span><span class="tech-badge">Bootstrap</span><span
-                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
-                    </div>
-                    <a href="https://laporpajak.pendidikan.gunungkidulkab.go.id/" class="project-link" target="_blank"
-                        rel="noopener">
-                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M7 17L17 7M7 7h10v10" />
-                        </svg>
-                    </a>
-                </div>
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Kementerian Perhubungan</span><span class="project__year">2024</span></div>
+                    <h3 class="project__name">Microsite OBU</h3>
+                    <p class="project__desc" data-en="Multi-tenant CMS for airport authority offices — granular RBAC, OAuth2 SSO with encrypted callbacks, a custom cache-invalidation layer, and a GitLab CI/CD deploy pipeline."
+                        data-id="CMS multi-tenant untuk kantor otoritas bandara — RBAC granular, OAuth2 SSO dengan encrypted callback, custom cache-invalidation layer, dan pipeline deploy GitLab CI/CD.">
+                        Multi-tenant CMS for airport authority offices — granular RBAC, OAuth2 SSO with encrypted
+                        callbacks, a custom cache-invalidation layer, and a GitLab CI/CD deploy pipeline.</p>
+                    <div class="project__tags"><span>Laravel 12</span><span>Alpine.js</span><span>Tailwind</span></div>
+                    <span class="project__status">Ongoing · internal</span>
+                </article>
 
-                <div class="project-card reveal" style="transition-delay:0.3s">
-                    <div class="project-company">Dinas Pendidikan Kab. Gunungkidul</div>
-                    <div class="project-name">Dinas Pendidikan Website</div>
-                    <div class="project-desc"
-                        data-en="Official website and publication system for the Gunungkidul District Education Office."
-                        data-id="Website resmi dan sistem publikasi untuk Dinas Pendidikan Kabupaten Gunungkidul.">
-                        Official website and publication system for the Gunungkidul District Education Office.</div>
-                    <div class="project-tech">
-                        <span class="tech-badge">Laravel</span><span class="tech-badge">Bootstrap</span><span
-                            class="tech-badge">JavaScript</span><span class="tech-badge">MySQL</span>
-                    </div>
-                    <a href="https://pendidikan.gunungkidulkab.go.id" class="project-link" target="_blank"
-                        rel="noopener">
-                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M7 17L17 7M7 7h10v10" />
-                        </svg>
-                    </a>
-                </div>
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Pemerintah Desa Gangsalan Lor</span><span class="project__year">2026</span></div>
+                    <h3 class="project__name">Padukuhan Gangsalan Lor Website</h3>
+                    <p class="project__desc" data-en="Village-government profile site — full CRUD CMS for demographics, local businesses (UMKM), village assets, news and events, with Chart.js population infographics."
+                        data-id="Situs profil pemerintah desa — CMS CRUD lengkap untuk demografi, UMKM, aset desa, berita dan kegiatan, dengan infografis kependudukan berbasis Chart.js.">
+                        Village-government profile site — full CRUD CMS for demographics, local businesses (UMKM),
+                        village assets, news and events, with Chart.js population infographics.</p>
+                    <div class="project__tags"><span>Laravel 13</span><span>Tailwind</span><span>Chart.js</span></div>
+                    <span class="project__status">Freelance · 2026</span>
+                </article>
 
-                <div class="project-card reveal" style="transition-delay:0.35s">
-                    <div class="project-company">Dinas Pendidikan Kab. Gunungkidul</div>
-                    <div class="project-name">ASPD Computer-based Test (CBT)</div>
-                    <div class="project-desc"
-                        data-en="Computer-based testing system built with Python Flask, deployable online and offline via VirtualBox disk image."
-                        data-id="Sistem ujian berbasis komputer yang dibangun dengan Python Flask, dapat digunakan online maupun offline melalui VirtualBox.">
-                        Computer-based testing (CBT) system built with Python Flask, deployable online and offline via
-                        VirtualBox (VDI) VM.</div>
-                    <div class="project-tech">
-                        <span class="tech-badge">Flask</span><span class="tech-badge">Python</span><span
-                            class="tech-badge">Bootstrap</span><span class="tech-badge">MySQL</span>
-                    </div>
-                    <a href="http://cbt.pendidikan.gunungkidulkab.go.id" class="project-link" target="_blank"
-                        rel="noopener">
-                        <span data-en="Visit" data-id="Kunjungi">Visit</span>
-                        <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                            <path d="M7 17L17 7M7 7h10v10" />
-                        </svg>
-                    </a>
-                </div>
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Dinas Pendidikan Kab. Gunungkidul</span><span class="project__year">2020</span></div>
+                    <h3 class="project__name">ASPD Computer-based Test</h3>
+                    <p class="project__desc" data-en="Computer-based testing system for regional standard-assessment exams, used by 547 schools; deployable online and offline via a VirtualBox VM image."
+                        data-id="Sistem ujian berbasis komputer untuk asesmen standar pendidikan daerah, digunakan oleh 547 sekolah; dapat dijalankan online maupun offline via image VM VirtualBox.">
+                        Computer-based testing system for regional standard-assessment exams, used by 547 schools;
+                        deployable online and offline via a VirtualBox VM image.</p>
+                    <div class="project__tags"><span>Flask</span><span>Python</span><span>MySQL</span></div>
+                    <a class="link" href="http://cbt.pendidikan.gunungkidulkab.go.id" target="_blank" rel="noopener">View site →</a>
+                </article>
+
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Dinas Pendidikan Kab. Gunungkidul</span><span class="project__year">2019</span></div>
+                    <h3 class="project__name">School Website Monitoring System</h3>
+                    <p class="project__desc" data-en="Public monitoring platform tracking 1,917 schools across Gunungkidul Regency (113 SMP, 481 SD, 1,323 PAUD/PNF) with real-time data display."
+                        data-id="Platform monitoring publik yang melacak 1.917 sekolah di Kabupaten Gunungkidul (113 SMP, 481 SD, 1.323 PAUD/PNF) dengan tampilan data real-time.">
+                        Public monitoring platform tracking 1,917 schools across Gunungkidul Regency (113 SMP, 481 SD,
+                        1,323 PAUD/PNF) with real-time data display.</p>
+                    <div class="project__tags"><span>CodeIgniter</span><span>Bootstrap</span><span>SQL Server</span></div>
+                    <a class="link" href="https://monitorweb.pendidikan.gunungkidulkab.go.id/" target="_blank" rel="noopener">View site →</a>
+                </article>
+
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Dinas Pendidikan Kab. Gunungkidul</span><span class="project__year">2018</span></div>
+                    <h3 class="project__name">BOS Fund Tax Reporting System</h3>
+                    <p class="project__desc" data-en="Self-service, opt-in tax reporting tool for schools receiving BOS (Bantuan Operasional Sekolah) government funding."
+                        data-id="Alat pelaporan pajak mandiri (opt-in) untuk sekolah penerima dana BOS (Bantuan Operasional Sekolah).">
+                        Self-service, opt-in tax reporting tool for schools receiving BOS (Bantuan Operasional Sekolah)
+                        government funding.</p>
+                    <div class="project__tags"><span>Laravel</span><span>Bootstrap</span><span>MySQL</span></div>
+                    <a class="link" href="https://laporpajak.pendidikan.gunungkidulkab.go.id/" target="_blank" rel="noopener">View site →</a>
+                </article>
+
+                <article class="project">
+                    <div class="project__head"><span class="project__org">Dinas Pendidikan Kab. Gunungkidul</span><span class="project__year">2018</span></div>
+                    <h3 class="project__name">Dinas Pendidikan Website</h3>
+                    <p class="project__desc" data-en="Full CMS-driven publication site — dynamic hero video, live statistics, news, galleries, FAQ, official directory, and site-identity management."
+                        data-id="Situs publikasi berbasis CMS lengkap — video hero dinamis, statistik langsung, berita, galeri, FAQ, direktori resmi, dan manajemen identitas situs.">
+                        Full CMS-driven publication site — dynamic hero video, live statistics, news, galleries, FAQ,
+                        official directory, and site-identity management.</p>
+                    <div class="project__tags"><span>Laravel</span><span>Bootstrap</span><span>MySQL</span></div>
+                    <a class="link" href="https://pendidikan.gunungkidulkab.go.id" target="_blank" rel="noopener">View site →</a>
+                </article>
 
             </div>
         </div>
@@ -1573,160 +834,184 @@
 
     <!-- CONTACT -->
     <section id="contact">
-        <div class="section-inner">
-            <div class="section-header reveal">
-                <div class="section-eyebrow" data-en="Let's Connect" data-id="Ayo Terhubung">Let's Connect</div>
-                <h2 class="section-title" data-en="Get In Touch" data-id="Hubungi Saya">Get In Touch</h2>
-                <p class="section-subtitle"
-                    data-en="Have a project in mind or want to collaborate? I'm always open to discussing new opportunities."
-                    data-id="Punya proyek atau ingin berkolaborasi? Saya selalu terbuka untuk mendiskusikan peluang baru.">
-                    Have a project in mind or want to collaborate? I'm always open to discussing new opportunities.</p>
+        <div class="section-inner contact-grid">
+            <div class="reveal">
+                <div class="avail-chip">
+                    <span class="dot-live" aria-hidden="true"></span>
+                    <span data-en="Open to new roles" data-id="Terbuka untuk peran baru">Open to new roles</span>
+                </div>
+                <h2 data-en="Let's talk about what you're building." data-id="Mari bicarakan apa yang sedang Anda bangun.">Let's talk about what you're building.</h2>
+                <p class="section-sub" data-en="Based in Jakarta (GMT+7), open to remote, part-time, or full-time backend/full-stack roles. Experienced delivering for government institutions."
+                    data-id="Berbasis di Jakarta (GMT+7), terbuka untuk peran remote, paruh waktu, atau penuh waktu di bidang backend/full-stack. Berpengalaman menghadirkan solusi untuk instansi pemerintah.">
+                    Based in Jakarta (GMT+7), open to remote, part-time, or full-time backend/full-stack roles.
+                    Experienced delivering for government institutions.</p>
+                <a href="mailto:greyfikal9@gmail.com" class="btn btn--accent">greyfikal9@gmail.com</a>
             </div>
-            <div class="contact-grid">
-                <div class="contact-links reveal">
-                    <a href="mailto:greyfikal9@gmail.com" class="contact-item">
-                        <div class="contact-icon">✉️</div>
-                        <div>
-                            <div class="contact-label">Email</div>
-                            <div class="contact-value">greyfikal9@gmail.com</div>
-                        </div>
-                    </a>
-                    <a href="https://linkedin.com/in/gryfklapryd" class="contact-item" target="_blank" rel="noopener">
-                        <div class="contact-icon">💼</div>
-                        <div>
-                            <div class="contact-label">LinkedIn</div>
-                            <div class="contact-value">linkedin.com/in/gryfklapryd</div>
-                        </div>
-                    </a>
-                    <a href="https://github.com/gryfklapryd" class="contact-item" target="_blank" rel="noopener">
-                        <div class="contact-icon">🐙</div>
-                        <div>
-                            <div class="contact-label">GitHub</div>
-                            <div class="contact-value">github.com/gryfklapryd</div>
-                        </div>
-                    </a>
-                    <a href="https://greyfikal.web.id" class="contact-item" target="_blank" rel="noopener">
-                        <div class="contact-icon">🌐</div>
-                        <div>
-                            <div class="contact-label">Website</div>
-                            <div class="contact-value">greyfikal.web.id</div>
-                        </div>
-                    </a>
-                </div>
-                <div class="availability-card reveal" style="transition-delay:0.15s">
-                    <div class="avail-status">
-                        <span class="dot"></span>
-                        <span data-en="Available for opportunities" data-id="Tersedia untuk peluang">Available for
-                            opportunities</span>
-                    </div>
-                    <h3 class="section-title" style="font-size:1.5rem;margin-bottom:0.75rem"
-                        data-en="Let's build something great together."
-                        data-id="Mari bangun sesuatu yang luar biasa bersama.">Let's build something great together.
-                    </h3>
-                    <p style="color:var(--muted);font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem"
-                        data-en="Based in Jakarta (GMT+7), open to remote collaboration, part-time, or full-time roles. Experienced in delivering for government institutions."
-                        data-id="Berbasis di Jakarta (GMT+7), terbuka untuk kolaborasi remote, paruh waktu, atau penuh waktu. Berpengalaman dalam proyek instansi pemerintah.">
-                        Based in Jakarta (GMT+7), open to remote collaboration, part-time, or full-time roles.
-                        Experienced in delivering for government institutions.</p>
-                    <a href="mailto:greyfikal9@gmail.com" class="btn-primary" style="display:inline-flex"
-                        data-en="Say Hello 👋" data-id="Sapa Saya 👋">Say Hello 👋</a>
-                </div>
+            <div class="contact-links reveal" style="transition-delay:0.1s">
+                <a class="link" href="https://linkedin.com/in/gryfklapryd" target="_blank" rel="noopener">LinkedIn ↗</a>
+                <a class="link" href="https://github.com/gryfklapryd" target="_blank" rel="noopener">GitHub ↗</a>
+                <a class="link" href="https://greyfikal.web.id" target="_blank" rel="noopener">greyfikal.web.id ↗</a>
+                <a class="link" href="https://gryfklapryd.github.io" target="_blank" rel="noopener">Portfolio (GitHub Pages) ↗</a>
             </div>
         </div>
     </section>
 
-    <!-- FOOTER -->
-    <footer>
-        <p>© 2025 Greyfikal Apriyuda · <span data-en="Built with passion in Jakarta"
-                data-id="Dibuat dengan passion di Jakarta">Built with passion in Jakarta</span> 🇮🇩</p>
+    <!-- FOOTER (Ft2) -->
+    <footer class="foot-line">
+        <p><span class="wordmark">greyfikal<span class="fn">()</span></span> · <span data-en="Built in Jakarta, shipped to production." data-id="Dibuat di Jakarta, dirilis ke produksi.">Built in Jakarta, shipped to production.</span> · © 2026</p>
     </footer>
 
     <script>
-        // =====================
-        // LANGUAGE SYSTEM
-        // =====================
-        let currentLang = 'en';
+        // ===================== LANGUAGE =====================
+        let currentLang = localStorage.getItem('lang') || 'en';
 
         function setLang(lang) {
             currentLang = lang;
+            localStorage.setItem('lang', lang);
             document.documentElement.lang = lang;
             document.getElementById('lang-btn').textContent = lang === 'en' ? 'ID' : 'EN';
-
             document.querySelectorAll('[data-en][data-id]').forEach(el => {
                 const text = el.getAttribute('data-' + lang);
                 if (text) el.innerHTML = text;
             });
         }
+        document.getElementById('lang-btn').addEventListener('click', () => setLang(currentLang === 'en' ? 'id' : 'en'));
 
-        document.getElementById('lang-btn').addEventListener('click', () => {
-            setLang(currentLang === 'en' ? 'id' : 'en');
-        });
-
-        // =====================
-        // THEME SYSTEM
-        // =====================
+        // ===================== THEME =====================
         const themeBtn = document.getElementById('theme-btn');
-        let isDark = true;
+        let theme = localStorage.getItem('theme') || 'light';
 
-        themeBtn.addEventListener('click', () => {
-            isDark = !isDark;
-            document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-            themeBtn.textContent = isDark ? '☀️' : '🌙';
-        });
-
-        // =====================
-        // NAVBAR SCROLL
-        // =====================
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 60) nav.classList.add('scrolled');
-            else nav.classList.remove('scrolled');
-        });
-
-        // =====================
-        // TYPING ANIMATION
-        // =====================
-        const phrases = {
-            en: ['Software Engineer', 'Full-Stack Developer', 'System Administrator', 'Cybersecurity Enthusiast'],
-            id: ['Software Engineer', 'Full-Stack Developer', 'System Administrator', 'Penggemar Keamanan Siber']
-        };
-        let phraseIndex = 0, charIndex = 0, isDeleting = false;
-
-        function type() {
-            const list = phrases[currentLang];
-            const current = list[phraseIndex];
-            const el = document.getElementById('typed-text');
-
-            if (isDeleting) {
-                el.textContent = current.substring(0, charIndex--);
-            } else {
-                el.textContent = current.substring(0, charIndex++);
-            }
-
-            let delay = isDeleting ? 50 : 90;
-
-            if (!isDeleting && charIndex === current.length + 1) {
-                isDeleting = true; delay = 1800;
-            } else if (isDeleting && charIndex === 0) {
-                isDeleting = false;
-                phraseIndex = (phraseIndex + 1) % list.length;
-                delay = 400;
-            }
-
-            setTimeout(type, delay);
+        function setTheme(t) {
+            theme = t;
+            localStorage.setItem('theme', t);
+            document.documentElement.setAttribute('data-theme', t);
+            themeBtn.textContent = t === 'dark' ? '◑' : '◐';
         }
-        type();
+        themeBtn.addEventListener('click', () => setTheme(theme === 'dark' ? 'light' : 'dark'));
 
-        // =====================
-        // SCROLL REVEAL
-        // =====================
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => {
-                if (e.isIntersecting) { e.target.classList.add('visible'); }
+        // ===================== NAV SCROLL FROST =====================
+        const nav = document.getElementById('nav');
+        let ticking = false;
+        window.addEventListener('scroll', () => {
+            if (ticking) return;
+            ticking = true;
+            requestAnimationFrame(() => {
+                nav.classList.toggle('is-scrolled', window.scrollY > 40);
+                ticking = false;
             });
-        }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+        });
 
-        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+        // ===================== REVEAL =====================
+        document.querySelectorAll('.reveal-group').forEach(group => {
+            [...group.children].forEach((child, i) => {
+                child.classList.add('reveal');
+                child.style.setProperty('--i', i);
+            });
+        });
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { e.target.classList.add('is-in'); revealObserver.unobserve(e.target); }
+            });
+        }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+        document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
+        // ===================== NUMBER TICK =====================
+        const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+        function animateCount(el) {
+            const target = parseInt(el.dataset.target, 10);
+            if (reduceMotion) { el.textContent = target; return; }
+            const dur = 1300;
+            const start = performance.now();
+            function tick(now) {
+                const p = Math.min((now - start) / dur, 1);
+                const eased = 1 - Math.pow(1 - p, 3);
+                el.textContent = Math.round(eased * target);
+                if (p < 1) requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        }
+        const countObserver = new IntersectionObserver((entries) => {
+            entries.forEach(e => {
+                if (e.isIntersecting) { animateCount(e.target); countObserver.unobserve(e.target); }
+            });
+        }, { threshold: 0.5 });
+        document.querySelectorAll('[data-target]').forEach(el => countObserver.observe(el));
+
+        // ===================== CMDK PALETTE =====================
+        const cmdk = document.getElementById('cmdk');
+        const cmdkInput = document.getElementById('cmdk-input');
+        const cmdkResults = document.getElementById('cmdk-results');
+        let cmdkItems = [];
+        let activeIndex = -1;
+
+        function openCmdk() {
+            cmdk.classList.add('is-open');
+            cmdk.setAttribute('aria-hidden', 'false');
+            document.body.style.overflow = 'hidden';
+            cmdkInput.value = '';
+            filterCmdk('');
+            setTimeout(() => cmdkInput.focus(), 10);
+        }
+        function closeCmdk() {
+            cmdk.classList.remove('is-open');
+            cmdk.setAttribute('aria-hidden', 'true');
+            document.body.style.overflow = '';
+        }
+        function setActive(i) {
+            cmdkItems.forEach(el => el.classList.remove('is-active'));
+            if (cmdkItems[i]) { cmdkItems[i].classList.add('is-active'); cmdkItems[i].scrollIntoView({ block: 'nearest' }); }
+            activeIndex = i;
+        }
+        function filterCmdk(q) {
+            const query = q.trim().toLowerCase();
+            cmdkResults.querySelectorAll('.cmdk__item').forEach(item => {
+                item.hidden = query.length > 0 && !item.textContent.toLowerCase().includes(query);
+            });
+            cmdkResults.querySelectorAll('.cmdk__group').forEach(group => {
+                let sib = group.nextElementSibling, any = false;
+                while (sib && sib.classList.contains('cmdk__item')) { if (!sib.hidden) any = true; sib = sib.nextElementSibling; }
+                group.hidden = !any;
+            });
+            cmdkItems = [...cmdkResults.querySelectorAll('.cmdk__item')].filter(el => !el.hidden);
+            setActive(cmdkItems.length ? 0 : -1);
+        }
+        function runCommand(el) {
+            const goto = el.dataset.goto, cmd = el.dataset.cmd;
+            if (goto) {
+                closeCmdk();
+                document.querySelector(goto)?.scrollIntoView({ behavior: 'smooth' });
+                return;
+            }
+            if (cmd === 'theme') setTheme(theme === 'dark' ? 'light' : 'dark');
+            if (cmd === 'lang') setLang(currentLang === 'en' ? 'id' : 'en');
+            if (cmd === 'copy-email') navigator.clipboard?.writeText('greyfikal9@gmail.com');
+            if (cmd === 'github') window.open('https://github.com/gryfklapryd', '_blank', 'noopener');
+            closeCmdk();
+        }
+
+        document.getElementById('searchpill').addEventListener('click', openCmdk);
+        cmdk.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeCmdk));
+        cmdkResults.addEventListener('click', (e) => {
+            const item = e.target.closest('.cmdk__item');
+            if (item) runCommand(item);
+        });
+        cmdkInput.addEventListener('input', (e) => filterCmdk(e.target.value));
+        document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+                e.preventDefault();
+                cmdk.classList.contains('is-open') ? closeCmdk() : openCmdk();
+                return;
+            }
+            if (!cmdk.classList.contains('is-open')) return;
+            if (e.key === 'Escape') closeCmdk();
+            if (e.key === 'ArrowDown') { e.preventDefault(); setActive(Math.min(activeIndex + 1, cmdkItems.length - 1)); }
+            if (e.key === 'ArrowUp') { e.preventDefault(); setActive(Math.max(activeIndex - 1, 0)); }
+            if (e.key === 'Enter' && cmdkItems[activeIndex]) { e.preventDefault(); runCommand(cmdkItems[activeIndex]); }
+        });
+
+        // ===================== INIT =====================
+        setLang(currentLang);
+        setTheme(theme);
     </script>
 </body>
 
